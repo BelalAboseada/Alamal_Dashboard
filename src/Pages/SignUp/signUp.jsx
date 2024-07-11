@@ -42,6 +42,8 @@ const SignUp = () => {
       );
       localStorage.setItem("token", data.token);
       toast.success("Account Created Successfully", options);
+      localStorage.setItem("companyId", data.results.company);
+      localStorage.setItem("id", data.results._id);
       navigate("/SignIn");
     } catch (err) {
       toast.error(err.message, options);

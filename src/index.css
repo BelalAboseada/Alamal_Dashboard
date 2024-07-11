@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
 
 :root {
   --main-color: #36a8f9;
@@ -13,7 +14,7 @@
   box-sizing: border-box;
 }
 body {
-  font-family: "cairo", sans-serif;
+  font-family: "Roboto", sans-serif;
   scroll-behavior: smooth;
   direction: ltr;
 }
@@ -32,8 +33,6 @@ button {
   border: none;
 }
 input {
-  outline: none;
-  border: none;
   color: var(--text-color);
   padding: 0.5rem;
   font-size: 1rem;
@@ -46,10 +45,10 @@ label {
 option {
   cursor: pointer;
 }
-.Title{
+.Title {
   color: var(--main-color);
   font-size: 2rem;
   font-weight: 500;
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
