@@ -1,0 +1,8 @@
+.Input_file::-webkit-file-upload-button{
+visibility: hidden;
+opacity: 0;
+display: none;
+}
+.Input_file::placeholder{
+color: var(--main-color);
+}

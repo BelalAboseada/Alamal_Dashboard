@@ -1,0 +1,20 @@
+h2 {
+  color: var(--text-color);
+}
+
+
+.btn {
+  background-color: var(--main-color);
+}
+.select{
+    border-radius: 12px ;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    border: 1px solid var(--text-color);
+}
+svg{
+  width: 20px;
+  color: var(--text-color);
+}
