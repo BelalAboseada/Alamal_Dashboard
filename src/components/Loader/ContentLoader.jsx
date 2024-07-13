@@ -1,7 +1,7 @@
 import "./ContentLoader.scss"
 const ContentLoader = () => {
   return (
-    <div className="loader ">
+    <div className="loader flex justify-center items-center">
       <div className="bar1"></div>
       <div className="bar2"></div>
       <div className="bar3"></div>

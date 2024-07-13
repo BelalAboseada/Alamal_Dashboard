@@ -87,9 +87,34 @@ export const getReps = async () => {
 };
 // get All Invoices
 
-export const getAllInvoices = async () => {
+export const getAllInvoices = async (page, limit) => {
   try {
-    const response = await axios.get(`${ApiUrl}/invoice`);
+     const response = await axios.get(
+       `${ApiUrl}/invoice?page=${page}&limit=${limit}`
+     );
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : { message: "Network error" };
+  }
+};
+
+export const getInvoice = async (id) => {
+  try {
+    const response = await axios.get(`${ApiUrl}/invoice/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : { message: "Network error" };
+  }
+};
+// get Filtered Invoices
+export const getFilteredInvoices = async (filterType, filterValue) => {
+  try {
+    const response = await axios.get(
+      `${ApiUrl}/invoice?filterType=${filterType}&filterValue=${filterValue}`,
+      {
+        params: { filterType, filterValue },
+      }
+    );
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };

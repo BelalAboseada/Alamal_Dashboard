@@ -72,7 +72,6 @@ const MakeInvoice = () => {
     }
   };
 
-  
   const options = {
     position: "bottom-right",
     autoClose: 5000,
@@ -85,7 +84,6 @@ const MakeInvoice = () => {
   const handleImageChange = (event) => {
     setImage(event.target.files[0]);
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -116,6 +114,7 @@ const MakeInvoice = () => {
       const response = await makeInvoice(invoiceData);
       console.log("Invoice created successfully:", response);
       toast.success("Invoice created successfully", options);
+
       // Clear input values after successful submission
       setSelectedPharmacy("");
       setSelectedRep("");
@@ -139,20 +138,22 @@ const MakeInvoice = () => {
       <ContentWrapper>
         <h1 className="Title">{t("makeInvoices")}</h1>
 
-        <form onSubmit={handleSubmit} className="bg-gray-100 p-5 rounded-md shadow-sm mb-5">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-gray-100 p-5 rounded-md shadow-sm mb-5"
+        >
           <div className="flex items-center justify-between mt-5">
             <div className="my-2  mx-3 flex flex-col w-full ">
               <label
                 htmlFor="Pharmacy"
                 className="block text-sm font-medium leading-6 mb-2"
               >
-                Select a Pharmacy
+                {t("selectPharmacy")}
               </label>
               <Select
-                variant="outlined"
+                variant="standard"
                 placeholder="Select a Pharmacy"
                 id="Pharmacy"
-                label="Pharmacy"
                 className="select w-full rounded-md border-0 p-2 shadow-md  sm:text-sm sm:leading-6"
                 value={selectedPharmacy}
                 onChange={(e) => setSelectedPharmacy(e)}
@@ -177,11 +178,10 @@ const MakeInvoice = () => {
                 htmlFor="Medical Rep"
                 className="block text-sm font-medium leading-6 mb-2"
               >
-                Select a Medical Rep
+                {t("selectMedicalRep")}
               </label>
               <Select
-                variant="outlined"
-                label="Medical Rep"
+                variant="standard"
                 placeholder="Select a Medical Rep"
                 id="Medical-Rep"
                 className="select w-full rounded-md border-0 p-2 shadow-md  sm:text-sm sm:leading-6"
@@ -209,13 +209,12 @@ const MakeInvoice = () => {
                 htmlFor="Driver"
                 className="block text-sm font-medium leading-6 mb-2"
               >
-                Select a Driver
+                {t("selectDriverValue")}
               </label>
               <Select
-                variant="outlined"
+                variant="standard"
                 placeholder="Select a Driver"
                 id="Driver"
-                label="driver"
                 className="select w-full rounded-md border-0 p-2 shadow-md  sm:text-sm sm:leading-6"
                 value={selectedDriver}
                 onChange={(e) => setSelectedDriver(e)}
@@ -242,9 +241,8 @@ const MakeInvoice = () => {
                 {t("totalPaid")}
               </label>
               <Select
-                variant="outlined"
+                variant="standard"
                 placeholder="Totally Paid"
-                label="Totally Paid"
                 className="select w-full rounded-md border-0 p-2 shadow-md  sm:text-sm sm:leading-6"
                 value={totalPaid}
                 onChange={(e) => setTotalPaid(e)}
@@ -262,14 +260,13 @@ const MakeInvoice = () => {
                 htmlFor="Select Invoice"
                 className="block text-sm font-medium leading-6 mb-2"
               >
-                Select Invoice Type
+                {t("selectInvoiceType")}
               </label>
               <Select
-                variant="outlined"
+                variant="standard"
                 placeholder="Select Invoice Type"
                 className="select w-full rounded-md border-0 py-2 shadow-md sm:text-sm sm:leading-6"
                 value={invoiceType}
-                label="Invoice Type"
                 onChange={(e) => setInvoiceType(e)}
                 required
               >
@@ -282,14 +279,13 @@ const MakeInvoice = () => {
                 htmlFor="Select Invoice"
                 className="block text-sm font-medium leading-6 mb-2"
               >
-                Select Invoice Status
+                {t("selectInvoiceStatus")}
               </label>
               <Select
-                variant="outlined"
+                variant="standard"
                 placeholder="Select Invoice Type"
                 className="select w-full rounded-md border-0 p-2 shadow-md   sm:text-sm sm:leading-6"
                 value={invoiceStatus}
-                label="Invoice Status"
                 onChange={(e) => setInvoiceStatus(e)}
                 required
               >
@@ -305,11 +301,10 @@ const MakeInvoice = () => {
                 htmlFor="Select Order Status"
                 className="block text-sm font-medium leading-6 mb-2"
               >
-                Select Order Status
+                {t("selectOrderStatus")}
               </label>
               <Select
-                variant="outlined"
-                label=" Select Order Status"
+                variant="standard"
                 placeholder="Select Order Status"
                 className="select w-full rounded-md border-0 py-2 shadow-md outline-none focus:outline-none sm:text-sm sm:leading-6"
                 value={orderStatus}
@@ -324,30 +319,48 @@ const MakeInvoice = () => {
           </div>
           <div className="flex items-center justify-between mt-5">
             <div className="my-2 mx-3 flex flex-col w-full ">
+              <label
+                htmlFor="Amount"
+                className="block text-sm font-medium leading-6 mb-2"
+              >
+                {t("amount")}
+              </label>
               <Input
-                variant="outlined"
-                label="Amount"
-                placeholder="Amount"
+                variant="standard"
+                id="Amount"
+                placeholder={t("amount")}
                 value={amount}
                 onChange={handleAmountChange}
                 className="Input w-full rounded-md border-0 p-2   shadow-md sm:text-sm sm:leading-6"
               />
             </div>
             <div className="my-2 mx-3 flex flex-col w-full ">
+              <label
+                htmlFor="Comment"
+                className="block text-sm font-medium leading-6 mb-2"
+              >
+                {t("comment")}
+              </label>
               <Input
-                variant="outlined"
-                label="Comment"
-                placeholder="Comment"
+                variant="standard"
+                placeholder={t("comment")}
+                id="Comment"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 className="Input w-full rounded-md border-0 p-2   shadow-md sm:text-sm sm:leading-6"
               />
             </div>
             <div className="my-2 mx-3 flex flex-col w-full ">
+              <label
+                htmlFor="Note"
+                className="block text-sm font-medium leading-6 mb-2"
+              >
+                {t("note")}
+              </label>
               <Input
-                variant="outlined"
-                label="Note"
-                placeholder="Note"
+                variant="standard"
+                placeholder={t("note")}
+                id="Note"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 className="Input w-full rounded-md border-0 p-2   shadow-md sm:text-sm sm:leading-6"
@@ -356,11 +369,17 @@ const MakeInvoice = () => {
           </div>
           <div className="flex items-center justify-center  mt-5">
             <div className="w-full">
+              <label
+                htmlFor="Date"
+                className="block text-sm font-medium leading-6 mb-2"
+              >
+                {t("date")}
+              </label>
               <Popover placement="bottom">
                 <PopoverHandler>
                   <Input
-                    variant="outlined"
-                    label="Select a Date"
+                    variant="standard"
+                    id="Date"
                     onChange={() => null}
                     className="Input w-full rounded-md border-0 p-2   shadow-md sm:text-sm sm:leading-6"
                     value={date ? format(date, "PPP") : ""}
@@ -415,11 +434,18 @@ const MakeInvoice = () => {
                 </PopoverContent>
               </Popover>
             </div>
+
             <div className="my-2 mx-3 flex flex-col w-full">
+              <label
+                htmlFor="file"
+                className="block text-sm font-medium leading-6 mb-2"
+              >
+                {t("selectImage")}
+              </label>
               <Input
-                variant="outlined"
+                variant="standard"
                 type="file"
-                label="Select Image"
+                id="file"
                 placeholder="Select Image"
                 className="Input_file w-full cursor-pointer rounded-md border-0 p-2  shadow-md  sm:text-sm sm:leading-6 "
                 onChange={handleImageChange}
@@ -428,7 +454,7 @@ const MakeInvoice = () => {
           </div>
           <div className="text-center mt-5">
             <Button type="submit" className="w-64" onClick={handleSubmit}>
-              Done
+              {t("done")}
             </Button>
           </div>
         </form>

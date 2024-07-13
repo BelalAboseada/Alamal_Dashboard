@@ -1,5 +1,4 @@
 import { Routes, Route, useLocation } from "react-router-dom";
-import Home from "../Pages/Home/Home";
 import SignIn from "../Pages/SignIn/SignIn";
 import SignUp from "../Pages/SignUp/signUp";
 import PageNotFound from "../Pages/Page404/PageNotFound";
@@ -12,6 +11,7 @@ import ArrangeVisits from "../Pages/Visits/ArrangeVisits";
 import AllVisits from "../Pages/Visits/AllVisits";
 import AllTrans from "../Pages/transactions/AllTrans";
 import MakeTransaction from "../Pages/transactions/MakeTransaction";
+import Invoice from "../Pages/Invoices/Invoice";
 
 const AppRoutes = () => {
   const location = useLocation();
@@ -24,6 +24,7 @@ const AppRoutes = () => {
       <Route path="/Profile" element={<Profile />} />
       <Route path="/MakeInvoice" element={<MakeInvoice />} />
       <Route path="/AllInvoices" element={<AllInvoices />} />
+      <Route path="/Invoice/:id" element={<Invoice />} />
       <Route path="/AllPayments" element={<AllPayments />} />
       <Route path="/MakePayment" element={<MakePayment />} />
       <Route path="/ArrangeVisits" element={<ArrangeVisits />} />

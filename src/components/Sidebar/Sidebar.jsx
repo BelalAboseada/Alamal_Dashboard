@@ -149,7 +149,7 @@ export function SidebarWithBurgerMenu() {
             <ButtonGroup color="blue" fullWidth>
               <Button
                 onClick={() => changeLanguage("ar")}
-                className={`${
+                className={`Lang${
                   isRTL ? "rounded-lg rounded-r-lg rounded-l-none" : ""
                 }`}
               >
@@ -157,7 +157,7 @@ export function SidebarWithBurgerMenu() {
               </Button>
               <Button
                 onClick={() => changeLanguage("en")}
-                className={`${
+                className={` Lang${
                   isRTL ? "rounded-lg rounded-r-none rounded-l-lg" : ""
                 }`}
               >

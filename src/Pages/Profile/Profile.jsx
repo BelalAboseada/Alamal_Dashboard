@@ -86,7 +86,7 @@ const Profile = () => {
             </div>
           </>
         ) : (
-          <div className=" flex justify-center  flex-col items-center m-auto">
+          <div className=" flex justify-center  flex-col items-center mt-5">
             <h4 className="text-lg font-bold">{t("YouDontHaveAccount")}</h4>
             <Link to="/signIn">
               <Button>{t("login")}</Button>
