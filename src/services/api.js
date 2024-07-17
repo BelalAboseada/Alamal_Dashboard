@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Api url
-const ApiUrl = "http://194.164.72.211:8000";
+const ApiUrl = "http://194.164.72.211:8008";
 
 // auth
 export const signIn = async (email, password) => {
@@ -15,7 +15,6 @@ export const signIn = async (email, password) => {
     throw error.response ? error.response.data : { message: "Network error" };
   }
 };
-
 export const signUp = async (
   email,
   password,
@@ -36,16 +35,10 @@ export const signUp = async (
     throw error.response ? error.response.data : { message: "Network error" };
   }
 };
-// makeInvoice
-export const makeInvoice = async (invoiceData) => {
-  try {
-    const response = await axios.post(`${ApiUrl}/invoice`, invoiceData);
-    return response.data;
-  } catch (error) {
-    throw error.response? error.response.data : { message: "Network error" };
-  }
-};
-export const InvoiceImage = async (invoiceImage) => {
+// Make Invoice 
+
+
+export const uploadInvoiceImage = async (invoiceImage) => {
   try {
     const formData = new FormData();
     formData.append("image", invoiceImage);
@@ -56,11 +49,30 @@ export const InvoiceImage = async (invoiceImage) => {
       },
     });
 
-    return response.data;
+    console.log(response);
+    return response.data.image; 
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };
   }
 };
+
+export const makeInvoice = async (invoiceData, invoiceImage) => {
+  try {
+    const imageUrl = await uploadInvoiceImage(invoiceImage);
+
+    const fullInvoiceData = {
+      ...invoiceData,
+      imageUrl,
+    };
+
+    const response = await axios.post(`${ApiUrl}/invoice`, fullInvoiceData);
+    return response.data; 
+  } catch (error) {
+    throw error.response ? error.response.data : { message: "Network error" };
+  }
+};
+
+// get All Users
 export const getDrivers = async () => {
   try {
     const response = await axios.get(`${ApiUrl}/users`);
@@ -86,18 +98,15 @@ export const getReps = async () => {
   }
 };
 // get All Invoices
-
-export const getAllInvoices = async (page, limit) => {
+export const getAllInvoices = async (page) => {
   try {
-     const response = await axios.get(
-       `${ApiUrl}/invoice?page=${page}&limit=${limit}`
-     );
+    const response = await axios.get(`${ApiUrl}/invoice?page=${page}`);
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };
   }
 };
-
+// get invoice 
 export const getInvoice = async (id) => {
   try {
     const response = await axios.get(`${ApiUrl}/invoice/${id}`);
@@ -110,13 +119,13 @@ export const getInvoice = async (id) => {
 export const getFilteredInvoices = async (filterType, filterValue) => {
   try {
     const response = await axios.get(
-      `${ApiUrl}/invoice?filterType=${filterType}&filterValue=${filterValue}`,
-      {
-        params: { filterType, filterValue },
-      }
+      `${ApiUrl}/invoice?filterType=${filterType}&filterValue=${filterValue}`
     );
+    console.log("Response:", response);
+
     return response.data;
   } catch (error) {
+    console.error("Error:", error);
     throw error.response ? error.response.data : { message: "Network error" };
   }
 };

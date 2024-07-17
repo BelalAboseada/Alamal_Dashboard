@@ -131,8 +131,7 @@
   "dashboard": "Dashboard",
   "Alamal": "Alamal",
   "Home": "Home",
- 
+  "invoice": "Invoice",
   "YouDontHaveAccount": "You Don`t Have Account, You Should Create Account First!",
-  "details" : "Details"
-
+  "details": "Details"
 }

@@ -1,3 +1,7 @@
+import { useState, useEffect } from "react";
+import { format } from "date-fns";
+import { DayPicker } from "react-day-picker";
+import { toast } from "react-toastify";
 import { t } from "i18next";
 import ContentWrapper from "../../components/ContentWrapper/contentWrapper";
 import {
@@ -9,23 +13,19 @@ import {
   Select,
 } from "@material-tailwind/react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
-import { useEffect, useState } from "react";
-import { format } from "date-fns";
-import { DayPicker } from "react-day-picker";
-import "./style.scss";
+import ContentLoader from "../../components/Loader/ContentLoader";
 import {
   getDrivers,
   getPharmacies,
   getReps,
-  InvoiceImage,
+  uploadInvoiceImage,
   makeInvoice,
 } from "../../services/api";
 import Button from "../../components/UI/Button";
-import ContentLoader from "../../components/Loader/ContentLoader";
-import { toast } from "react-toastify";
+import "./style.scss";
 
 const MakeInvoice = () => {
-  const [date, setDate] = useState();
+  const [date, setDate] = useState(null);
   const [drivers, setDrivers] = useState([]);
   const [pharmacies, setPharmacies] = useState([]);
   const [reps, setReps] = useState([]);
@@ -43,6 +43,7 @@ const MakeInvoice = () => {
   const [pharmaciesLoading, setPharmaciesLoading] = useState(true);
   const [repsLoading, setRepsLoading] = useState(true);
   const [driversLoading, setDriversLoading] = useState(true);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -81,15 +82,30 @@ const MakeInvoice = () => {
     draggable: true,
     progress: undefined,
   };
+
   const handleImageChange = (event) => {
     setImage(event.target.files[0]);
   };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
 
-    const CompanyId = localStorage.getItem("companyId");
-    const id = localStorage.getItem("id");
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
+  const CompanyId = localStorage.getItem("companyId");
+  const id = localStorage.getItem("id");
+
+  const formData = new FormData();
+  formData.append("image", image);
+
+  try {
+
+   let imageUrl = "";
+   if (image) {
+     const formData = new FormData();
+     formData.append("image", image);
+     const uploadResponse = await uploadInvoiceImage(formData);
+     imageUrl = uploadResponse.imageUrl; 
+   }
+   
     const invoiceData = {
       pharmacy: selectedPharmacy,
       medicalRep: selectedRep,
@@ -104,33 +120,42 @@ const MakeInvoice = () => {
       totalPaid,
       company: CompanyId,
       date: date ? format(date, "yyyy-MM-dd") : null,
+      imageUrl,
     };
 
-    try {
-      if (image) {
-        await InvoiceImage(image);
-      }
+    // Make the invoice creation request
+    const response = await makeInvoice(invoiceData);
+    console.log("Invoice creation response:", response);
 
-      const response = await makeInvoice(invoiceData);
-      console.log("Invoice created successfully:", response);
+    // Check if the response contains the expected data structure
+    if (response && response.data) {
+      const addedInvoice = response.data.addedInvoice;
+      console.log("Invoice created successfully:", addedInvoice);
       toast.success("Invoice created successfully", options);
 
-      // Clear input values after successful submission
-      setSelectedPharmacy("");
-      setSelectedRep("");
-      setSelectedDriver("");
-      setTotalPaid("");
-      setInvoiceType("");
-      setInvoiceStatus("");
-      setOrderStatus("");
-      setAmount("");
-      setComment("");
-      setNote("");
-      setDate(null);
-      setImage(null);
-    } catch (error) {
-      console.error("Error creating invoice:", error);
-    }
+      clearFormFields();
+      console.log("Fields cleared!");
+    } 
+  } catch (error) {
+    console.error("Error creating invoice:", error);
+    toast.error("Error creating invoice", options);
+  }
+};
+
+
+  const clearFormFields = () => {
+    setSelectedPharmacy("");
+    setSelectedRep("");
+    setSelectedDriver("");
+    setTotalPaid("");
+    setInvoiceType("");
+    setInvoiceStatus("");
+    setOrderStatus("");
+    setAmount("");
+    setComment("");
+    setNote("");
+    setDate(null);
+    setImage(null);
   };
 
   return (
@@ -142,7 +167,7 @@ const MakeInvoice = () => {
           onSubmit={handleSubmit}
           className="bg-gray-100 p-5 rounded-md shadow-sm mb-5"
         >
-          <div className="flex items-center justify-between mt-5">
+          <div className="mt-5 space-y-5 md:space-y-0 md:space-x-5 md:flex md:items-center md:justify-between">
             <div className="my-2  mx-3 flex flex-col w-full ">
               <label
                 htmlFor="Pharmacy"
@@ -203,7 +228,7 @@ const MakeInvoice = () => {
               </Select>
             </div>
           </div>
-          <div className="flex items-center justify-between mt-5">
+          <div className="mt-5 space-y-5 md:space-y-0 md:space-x-5 md:flex md:items-center md:justify-between">
             <div className="my-2  mx-3 flex flex-col w-full ">
               <label
                 htmlFor="Driver"
@@ -254,7 +279,7 @@ const MakeInvoice = () => {
               </Select>
             </div>
           </div>
-          <div className="flex items-center justify-between mt-5">
+          <div className="mt-5 space-y-5 md:space-y-0 md:space-x-5 md:flex md:items-center md:justify-between">
             <div className="my-2 mx-3 flex flex-col w-full ">
               <label
                 htmlFor="Select Invoice"
@@ -295,7 +320,7 @@ const MakeInvoice = () => {
               </Select>
             </div>
           </div>
-          <div className="flex items-center justify-between mt-5">
+          <div className="mt-5 space-y-5 md:space-y-0 md:space-x-5 md:flex md:items-center md:justify-between">
             <div className="my-2 mx-3 flex flex-col w-full ">
               <label
                 htmlFor="Select Order Status"
@@ -317,7 +342,7 @@ const MakeInvoice = () => {
               </Select>
             </div>
           </div>
-          <div className="flex items-center justify-between mt-5">
+          <div className="mt-5 space-y-5 md:space-y-0 md:space-x-5 md:flex md:items-center md:justify-between5">
             <div className="my-2 mx-3 flex flex-col w-full ">
               <label
                 htmlFor="Amount"
@@ -367,8 +392,8 @@ const MakeInvoice = () => {
               />
             </div>
           </div>
-          <div className="flex items-center justify-center  mt-5">
-            <div className="w-full">
+          <div className="mt-5 space-y-5 md:space-y-0 md:space-x-5 md:flex md:items-center md:justify-between">
+            <div className="w-full mx-3">
               <label
                 htmlFor="Date"
                 className="block text-sm font-medium leading-6 mb-2"

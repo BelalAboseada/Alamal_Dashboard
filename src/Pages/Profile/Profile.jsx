@@ -44,7 +44,9 @@ const Profile = () => {
       <ToastContainer />
       <ContentWrapper>
         {loading ? (
-          <Loader className="flex justify-center items-center" />
+          <div className="flex justify-center items-center">
+            <Loader />
+          </div>
         ) : user ? (
           <>
             <div className="title text-center">

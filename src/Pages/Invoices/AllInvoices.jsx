@@ -2,12 +2,7 @@ import { t } from "i18next";
 import ContentWrapper from "../../components/ContentWrapper/contentWrapper";
 import { useEffect, useState } from "react";
 import { getAllInvoices, getFilteredInvoices } from "../../services/api";
-import {
-  AdjustmentsHorizontalIcon,
-  ArrowRightIcon,
-  ArrowLeftIcon,
-  BanknotesIcon,
-} from "@heroicons/react/24/solid";
+import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/solid";
 import {
   Dialog,
   DialogBody,
@@ -18,12 +13,14 @@ import {
   Input,
   Select,
   Option,
-  IconButton,
   Breadcrumbs,
 } from "@material-tailwind/react";
 import "./style.scss";
 import Loader from "../../components/Loader/Loader";
 import { Link } from "react-router-dom";
+import InvoiceImage from "../../assets/item.png";
+import usePagination from "../../hooks/UsePagination";
+import Pagination from "../../components/Pagination/Pagination";
 
 const AllInvoices = () => {
   const [invoices, setInvoices] = useState([]);
@@ -31,29 +28,30 @@ const AllInvoices = () => {
   const [loading, setLoading] = useState(false);
   const [filterType, setFilterType] = useState("");
   const [filterValue, setFilterValue] = useState("");
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1); 
+  const { page, nextPage, prevPage, goToPage, totalPages, updateTotalPages } =
+    usePagination(1);
 
   const handleOpen = () => setOpen(!open);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const data = await getAllInvoices(page, 5); 
-        setInvoices(data.results);
-        setTotalPages(data.totalPages);
-        // console.log("Total Pages :", data.totalPages);
-        console.log("Fetched invoices:", data.results);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+useEffect(() => {
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const data = await getAllInvoices(page);
+      setInvoices(data.results);
+      updateTotalPages(data.count);
+      console.log("Fetched invoices:", data.results);
+      console.log("Total Pages:", totalPages); 
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchData();
-  }, [page]); 
+  fetchData();
+}, [page]);
+
 
   const handleFilterChange = (value) => {
     setFilterType(value);
@@ -62,31 +60,18 @@ const AllInvoices = () => {
   const handleSearchChange = (e) => {
     setFilterValue(e.target.value);
   };
-
   const handleFilterSubmit = async () => {
     setOpen(false);
     try {
       const data = await getFilteredInvoices(filterType, filterValue);
       setInvoices(data.results);
+      updateTotalPages(data.count, data.results.length);
       console.log("Filtered invoices:", data.results);
+      console.log("Total Pages:", totalPages);
     } catch (error) {
       console.error("Error fetching filtered data:", error);
     }
   };
-
-  const next = () => {
-    if (page < totalPages) setPage(page + 1);
-  };
-
-  const prev = () => {
-    if (page > 1) setPage(page - 1);
-  };
-
-  const getItemProps = (index) => ({
-    variant: page === index + 1 ? "filled" : "text",
-    onClick: () => setPage(index + 1),
-  });
-
 
   return (
     <div className="AllInvoices">
@@ -160,11 +145,11 @@ const AllInvoices = () => {
                     id="SelectFilter"
                     className="select w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
                     required
-                    onChange={(e) => handleFilterChange(e.target.value)}
+                    onChange={(e) => handleFilterChange(e)}
                   >
                     <Option value="pharmacy">{t("pharmacy")}</Option>
-                    <Option value="driver">{t("driver")}</Option>
-                    <Option value="rep">{t("medicalRep")}</Option>
+                    <Option value="company">{t("companyName")}</Option>
+                    <Option value="medicalRep">{t("medicalRep")}</Option>
                     <Option value="createdBy">{t("createdBy")}</Option>
                     <Option value="date">{t("date")}</Option>
                   </Select>
@@ -222,7 +207,13 @@ const AllInvoices = () => {
                   >
                     <div className="logo">
                       <span>
-                        <BanknotesIcon className="w-20 h-20 text-white" />
+                        <img
+                          src={InvoiceImage}
+                          width={100}
+                          height={100}
+                          className="InvoiceImage"
+                          alt="Invoice Image"
+                        />
                       </span>
                     </div>
                     <div>
@@ -254,41 +245,19 @@ const AllInvoices = () => {
                   </Link>
                 ))}
                 <div className="flex items-center justify-center gap-4">
-                  <Button
-                    variant="text"
-                    className="flex items-center gap-2 text-black"
-                    onClick={prev}
-                    disabled={page === 1}
-                  >
-                    <ArrowLeftIcon
-                      strokeWidth={2}
-                      className="h-4 w-4 text-black rtl:rotate-180"
-                    />{" "}
-                    {t("previous")}
-                  </Button>
-                  <div className="flex items-center gap-2">
-                    {[...Array(totalPages)].map((_, index) => (
-                      <IconButton className="ActivePaginate" key={index} {...getItemProps(index)}>
-                        {index + 1}
-                      </IconButton>
-                    ))}
-                  </div>
-                  <Button
-                    variant="text"
-                    className="flex items-center gap-2 text-black"
-                    onClick={next}
-                    disabled={page === totalPages}
-                  >
-                    {t("next")}{" "}
-                    <ArrowRightIcon
-                      strokeWidth={2}
-                      className="h-4 w-4 text-black rtl:rotate-180"
-                    />
-                  </Button>
+                  <Pagination
+                    page={page}
+                    totalPages={totalPages}
+                    nextPage={nextPage}
+                    prevPage={prevPage}
+                    goToPage={goToPage}
+                  />
                 </div>
               </>
             ) : (
-              <p className="text-gray-500">{t("noData")}</p>
+              <div className="text-center flex  justify-center items-center">
+                <p className="text-gray-500">{t("thersIsNoData")}</p>
+              </div>
             )}
           </div>
         )}

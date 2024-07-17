@@ -5,6 +5,7 @@ import { useState } from "react";
 import Loading from "../../components/Loader/Loader";
 import { toast, ToastContainer } from "react-toastify";
 import { t } from "i18next";
+
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,6 +20,7 @@ const SignIn = () => {
     draggable: true,
     progress: undefined,
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -45,14 +47,14 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center px-4">
       <ToastContainer />
-      <div className=" p-4 flex items-center justify-center">
+      <div className="p-4 flex items-center justify-center w-full">
         {loading ? (
           <Loading />
         ) : (
-          <div className="Wrapper grid grid-cols-12 gap-14 bg-white shadow-md p-6 rounded-lg overflow-hidden">
-            <div className="col-span-12 md:col-span-6 mt-10 sm:mx-auto sm:w-full sm:max-w-sm rounded p-5">
+          <div className="Wrapper grid grid-cols-1 md:grid-cols-12 gap-14 bg-white shadow-md p-6 rounded-lg overflow-hidden">
+            <div className="col-span-1 md:col-span-6 mt-10 sm:mx-auto sm:w-full sm:max-w-sm rounded p-5">
               <h2 className="mx-10 text-center text-2xl font-bold leading-9 tracking-tight">
                 {t("login")}
               </h2>
@@ -117,8 +119,12 @@ const SignIn = () => {
                 </Link>
               </p>
             </div>
-            <div className="col-span-12 md:col-span-6 flex items-center justify-center">
-              <img alt="alamal" src={SignInImg} className="mx-auto md:w-full" />
+            <div className="col-span-1 md:col-span-6 flex items-center justify-center">
+              <img
+                alt="alamal"
+                src={SignInImg}
+                className="mx-auto w-full md:w-auto"
+              />
             </div>
           </div>
         )}

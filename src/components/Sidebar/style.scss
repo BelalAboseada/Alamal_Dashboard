@@ -8,3 +8,31 @@ a{
     background-color: var(--main-color)!important;
 }
 
+.tabItems {
+    display: flex;
+    align-items: center;
+    height: 35px;
+    position: relative;
+    .tabItem {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100px;
+      color: var(--border-color);
+      font-size: 14px;
+      position: relative;
+      z-index: 1;
+      cursor: pointer;
+      transition: color ease 0.3s;
+    }
+    .langBg {
+      height: 35px;
+      width: 100px;
+      border-radius: 25px;
+      background: var(--main-color);
+      position: absolute;
+      left: 0;
+      transition: left cubic-bezier(0.88, -0.35, 0.565, 1.35) 0.4s;
+    }
+  }
