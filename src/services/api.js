@@ -35,7 +35,7 @@ export const signUp = async (
     throw error.response ? error.response.data : { message: "Network error" };
   }
 };
-// Make Invoice 
+// Make Invoice
 export const uploadInvoiceImage = async (invoiceImage) => {
   try {
     const formData = new FormData();
@@ -59,11 +59,9 @@ export const uploadInvoiceImage = async (invoiceImage) => {
     throw error.response ? error.response.data : { message: "Network error" };
   }
 };
-
-
 export const makeInvoice = async (invoiceData, Image) => {
   try {
-   let image = "";
+    let image = "";
 
     if (Image) {
       image = await uploadInvoiceImage(Image);
@@ -72,18 +70,16 @@ export const makeInvoice = async (invoiceData, Image) => {
     // Add imageUrl to invoiceData
     const fullInvoiceData = {
       ...invoiceData,
-      image, 
+      image,
     };
     console.log(fullInvoiceData);
 
     const response = await axios.post(`${ApiUrl}/invoice`, fullInvoiceData);
-    return response.data; 
+    return response.data;
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };
   }
 };
-
-
 
 // get All Users
 export const getDrivers = async () => {
@@ -110,6 +106,7 @@ export const getReps = async () => {
     throw error.response ? error.response.data : { message: "Network error" };
   }
 };
+
 // get All Invoices
 export const getAllInvoices = async (page) => {
   try {
@@ -119,7 +116,7 @@ export const getAllInvoices = async (page) => {
     throw error.response ? error.response.data : { message: "Network error" };
   }
 };
-// get invoice 
+// get invoice
 export const getInvoice = async (id) => {
   try {
     const response = await axios.get(`${ApiUrl}/invoice/${id}`);
@@ -139,6 +136,53 @@ export const getFilteredInvoices = async (filterType, filterValue) => {
     return response.data;
   } catch (error) {
     console.error("Error:", error);
+    throw error.response ? error.response.data : { message: "Network error" };
+  }
+};
+
+// Make Payment
+export const CreatePayment = async (paymentData) => {
+  try {
+    const response = await axios.post(`${ApiUrl}/payment`, paymentData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (err) {
+    throw err.response ? err.response.data : { message: "Network error" };
+  }
+};
+
+// All Payments 
+export const getAllPayments = async (page) => {
+  try {
+    const response = await axios.get(`${ApiUrl}/payment?page=${page}`);
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : { message: "Network error" };
+  }
+};
+// get Filtered Payment
+export const getFilteredPayments = async (filterType, filterValue) => {
+  try {
+    const response = await axios.get(
+      `${ApiUrl}/payment?filterType=${filterType}&filterValue=${filterValue}`
+    );
+    console.log("Response:", response);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error.response ? error.response.data : { message: "Network error" };
+  }
+};
+// get invoice
+export const getPayment = async (id) => {
+  try {
+    const response = await axios.get(`${ApiUrl}/invoice/${id}`);
+    return response.data;
+  } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };
   }
 };

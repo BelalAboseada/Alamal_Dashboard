@@ -249,12 +249,6 @@ export function SidebarWithBurgerMenu() {
                     <ListItemPrefix>
                       <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
                     </ListItemPrefix>
-                    <Link to={"MakePayment"}>{t("createPayment")}</Link>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                    </ListItemPrefix>
                     <Link to={"AllPayments"}>{t("viewPayment")}</Link>
                   </ListItem>
                 </List>

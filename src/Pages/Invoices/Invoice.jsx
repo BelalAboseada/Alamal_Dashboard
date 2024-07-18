@@ -8,8 +8,10 @@ import { NoSymbolIcon } from "@heroicons/react/24/solid";
 import { Breadcrumbs } from "@material-tailwind/react";
 import InvoiceImage from "../../assets/web-design-invoice.webp";
 import "./style.scss";
+import Button from "../../components/UI/Button";
+import {} from "react-router-dom";
 
-const Invoice = () => {
+const Invoice = ({ invoiceId , companyId, createdBy }) => {
   let { id } = useParams();
   const [invoice, setInvoice] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -37,6 +39,11 @@ const Invoice = () => {
 
   const closeImageModal = () => {
     setEnlargedImage(null);
+  };
+  const data = {
+    invoiceId:  id ,
+    companyId :  invoice?.company?._id ,
+    createdBy :  invoice?.createdBy?._id,
   };
 
   return (
@@ -189,6 +196,16 @@ const Invoice = () => {
                       {new Date(invoice.date).toLocaleDateString()}
                     </p>
                   </div>
+                </div>
+                <div className="flex gap-8   items-center my-2   w-full">
+                  <Button>
+                    <Link
+                      to={`/MakePayment?invoiceId=${data.invoiceId}&companyId=${data.companyId}&createdById=${data.createdBy}`}
+                      className="text-white w-full"
+                    >
+                      {t("createPayment")}
+                    </Link>
+                  </Button>
                 </div>
               </div>
             </div>
