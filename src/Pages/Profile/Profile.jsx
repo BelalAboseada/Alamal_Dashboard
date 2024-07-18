@@ -77,7 +77,7 @@ const Profile = () => {
                   <p className="m-1">{user.verified ? t("yes") : t("no")}</p>
                 </div>
               </div>
-              <div className="isActive wrapper  flex  items-center bg-gray-100 m-4 px-4 py-2 rounded-3xl">
+              <div className="isActive wrapper flex  items-center bg-gray-100 m-4 px-4 py-2 rounded-3xl">
                 <h2 className="text-lg font-bold">{t("isActive")}:</h2>
                 <p className="m-1">{user.isActive ? t("yes") : t("no")}</p>
               </div>

@@ -83,59 +83,42 @@ const MakeInvoice = () => {
     progress: undefined,
   };
 
-  const handleImageChange = (event) => {
-    setImage(event.target.files[0]);
-  };
+
 
 const handleSubmit = async (e) => {
   e.preventDefault();
 
-  const CompanyId = localStorage.getItem("companyId");
-  const id = localStorage.getItem("id");
+  if (!amount) {
+    toast.error("Data is required!");
+    return;
+  }
 
-  const formData = new FormData();
-  formData.append("image", image);
+  const user = localStorage.getItem("user");
+  const userId = JSON.parse(user)._id;
+  const companyId = JSON.parse(user).company;
 
   try {
+    const imageUrl = await uploadInvoiceImage(image); 
 
-   let imageUrl = "";
-   if (image) {
-     const formData = new FormData();
-     formData.append("image", image);
-     const uploadResponse = await uploadInvoiceImage(formData);
-     imageUrl = uploadResponse.imageUrl; 
-   }
-   
     const invoiceData = {
       pharmacy: selectedPharmacy,
       medicalRep: selectedRep,
       driver: selectedDriver,
-      createdBy: id,
+      createdBy: userId,
       dropStatus: note,
       dropComment: comment,
-      invoiceType,
-      invoiceStatus,
-      orderStatus,
       amount,
-      totalPaid,
-      company: CompanyId,
+      company: companyId,
       date: date ? format(date, "yyyy-MM-dd") : null,
-      imageUrl,
+      image: imageUrl,
     };
 
-    // Make the invoice creation request
-    const response = await makeInvoice(invoiceData);
-    console.log("Invoice creation response:", response);
+    const response = await makeInvoice(invoiceData, image); 
 
-    // Check if the response contains the expected data structure
-    if (response && response.data) {
-      const addedInvoice = response.data.addedInvoice;
-      console.log("Invoice created successfully:", addedInvoice);
+    if (response) {
       toast.success("Invoice created successfully", options);
-
       clearFormFields();
-      console.log("Fields cleared!");
-    } 
+    }
   } catch (error) {
     console.error("Error creating invoice:", error);
     toast.error("Error creating invoice", options);
@@ -143,20 +126,27 @@ const handleSubmit = async (e) => {
 };
 
 
-  const clearFormFields = () => {
-    setSelectedPharmacy("");
-    setSelectedRep("");
-    setSelectedDriver("");
-    setTotalPaid("");
-    setInvoiceType("");
-    setInvoiceStatus("");
-    setOrderStatus("");
-    setAmount("");
-    setComment("");
-    setNote("");
-    setDate(null);
-    setImage(null);
-  };
+ const clearFormFields = () => {
+   setSelectedPharmacy("");
+   setSelectedRep("");
+   setSelectedDriver("");
+   setAmount("");
+   setComment("");
+   setNote("");
+   setDate(null);
+   setImage(null);
+ };
+
+ const handleImageChange = (event) => {
+   const file = event.target.files[0];
+   if (file) {
+     setImage(file);
+     console.log("Selected file:", file);
+   }
+ };
+
+
+
 
   return (
     <div className="MakeInvoice">

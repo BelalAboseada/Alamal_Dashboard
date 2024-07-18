@@ -255,7 +255,7 @@ export function SidebarWithBurgerMenu() {
                     <ListItemPrefix>
                       <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
                     </ListItemPrefix>
-                    <Link to={"AllPayments"}>{t("paymentsDetails")}</Link>
+                    <Link to={"AllPayments"}>{t("viewPayment")}</Link>
                   </ListItem>
                 </List>
               </AccordionBody>

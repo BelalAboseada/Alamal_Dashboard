@@ -36,8 +36,6 @@ export const signUp = async (
   }
 };
 // Make Invoice 
-
-
 export const uploadInvoiceImage = async (invoiceImage) => {
   try {
     const formData = new FormData();
@@ -49,21 +47,34 @@ export const uploadInvoiceImage = async (invoiceImage) => {
       },
     });
 
-    console.log(response);
-    return response.data.image; 
+    console.log("Upload Response:", response);
+
+    const image = response.data.image[0];
+    if (!image) {
+      throw new Error("Image URL not found in response");
+    }
+
+    return image;
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };
   }
 };
 
-export const makeInvoice = async (invoiceData, invoiceImage) => {
-  try {
-    const imageUrl = await uploadInvoiceImage(invoiceImage);
 
+export const makeInvoice = async (invoiceData, Image) => {
+  try {
+   let image = "";
+
+    if (Image) {
+      image = await uploadInvoiceImage(Image);
+      console.log("Image URL in makeInvoice:", image);
+    }
+    // Add imageUrl to invoiceData
     const fullInvoiceData = {
       ...invoiceData,
-      imageUrl,
+      image, 
     };
+    console.log(fullInvoiceData);
 
     const response = await axios.post(`${ApiUrl}/invoice`, fullInvoiceData);
     return response.data; 
@@ -71,6 +82,8 @@ export const makeInvoice = async (invoiceData, invoiceImage) => {
     throw error.response ? error.response.data : { message: "Network error" };
   }
 };
+
+
 
 // get All Users
 export const getDrivers = async () => {
