@@ -177,10 +177,20 @@ export const getFilteredPayments = async (filterType, filterValue) => {
     throw error.response ? error.response.data : { message: "Network error" };
   }
 };
-// get invoice
+// get Payment
 export const getPayment = async (id) => {
   try {
-    const response = await axios.get(`${ApiUrl}/invoice/${id}`);
+    const response = await axios.get(`${ApiUrl}/payment/user/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : { message: "Network error" };
+  }
+};
+// getPaymentsForInvoice
+export const getPaymentsByInvoice = async (id) => {
+  try {
+    const response = await axios.get(`${ApiUrl}/payment/invoice/${id}`);
+    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };

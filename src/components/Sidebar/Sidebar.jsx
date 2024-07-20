@@ -8,7 +8,6 @@ import {
   Accordion,
   AccordionHeader,
   AccordionBody,
-  Input,
   Drawer,
   Card,
   ButtonGroup,
@@ -25,7 +24,7 @@ import {
 import {
   ChevronRightIcon,
   ChevronDownIcon,
-  MagnifyingGlassIcon,
+
   Bars3Icon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
@@ -134,17 +133,7 @@ export function SidebarWithBurgerMenu() {
             <img src={logo} alt="brand" className="h-8 w-8" />
             <Typography variant="h5">{t("Alamal")}</Typography>
           </div>
-          <div className="p-2">
-            <Input
-              icon={
-                <MagnifyingGlassIcon
-                  className={`h-5 w-5 ${isRTL ? "hidden" : ""}`}
-                />
-              }
-              label={`${t("search")}`}
-              variant="standard"
-            />
-          </div>
+       
           <div className="p-2">
             <ButtonGroup color="blue" fullWidth>
               <Button

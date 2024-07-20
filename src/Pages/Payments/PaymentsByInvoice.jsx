@@ -1,31 +1,33 @@
-import { t } from "i18next";
-import ContentWrapper from "../../components/ContentWrapper/contentWrapper";
 import { useEffect, useState } from "react";
-import { getAllInvoices, getFilteredInvoices } from "../../services/api";
-import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/solid";
+import { Link, useParams } from "react-router-dom";
+import ContentWrapper from "../../components/ContentWrapper/contentWrapper";
+import { getFilteredPayments, getPaymentsByInvoice } from "../../services/api";
+import Loader from "../../components/Loader/Loader";
+import { t } from "i18next";
+import "./style.scss";
 import {
+  Breadcrumbs,
+  Button,
   Dialog,
   DialogBody,
   DialogFooter,
   DialogHeader,
-  Typography,
-  Button,
   Input,
-  Select,
   Option,
-  Breadcrumbs,
+  Select,
+  Typography,
 } from "@material-tailwind/react";
-import "./style.scss";
-import Loader from "../../components/Loader/Loader";
-import { Link } from "react-router-dom";
-import InvoiceImage from "../../assets/item.png";
+import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/solid";
+import Img from "../../assets/dollar.png";
 import usePagination from "../../hooks/UsePagination";
 import Pagination from "../../components/Pagination/Pagination";
 
-const AllInvoices = () => {
-  const [invoices, setInvoices] = useState([]);
+const PaymentsByInvoice = () => {
+  const { id } = useParams();
+  const [payments, setPayments] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+
   const [filterType, setFilterType] = useState("");
   const [filterValue, setFilterValue] = useState("");
   const { page, nextPage, prevPage, goToPage, totalPages, updateTotalPages } =
@@ -34,23 +36,20 @@ const AllInvoices = () => {
   const handleOpen = () => setOpen(!open);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
+    const fetchPayments = async () => {
       try {
-        const data = await getAllInvoices(page);
-        setInvoices(data.results);
-        updateTotalPages(data.count);
-        console.log("Fetched invoices:", data.results);
-        console.log("Total Pages:", totalPages);
+        const data = await getPaymentsByInvoice(id);
+        setPayments(data.results);
+        console.log("Fetched payments:", data.results);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching payments:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
-  }, [page]);
+    fetchPayments();
+  }, [id]);
 
   const handleFilterChange = (value) => {
     setFilterType(value);
@@ -59,29 +58,29 @@ const AllInvoices = () => {
   const handleSearchChange = (e) => {
     setFilterValue(e.target.value);
   };
+
   const handleFilterSubmit = async () => {
     setOpen(false);
     try {
-      const data = await getFilteredInvoices(filterType, filterValue);
-      setInvoices(data.results);
+      const data = await getFilteredPayments(filterType, filterValue);
+      setPayments(data.results);
       updateTotalPages(data.count, data.results.length);
-      console.log("Filtered invoices:", data.results);
-      console.log("Total Pages:", totalPages);
+      console.log("Filtered payments:", data.results);
+      // console.log("Total Pages:", totalPages);
     } catch (error) {
       console.error("Error fetching filtered data:", error);
     }
   };
 
   return (
-    <div className="AllInvoices">
-      <h1 className="Title">{t("invoices")}</h1>
+    <div className="PaymentForInvoice">
       <ContentWrapper>
         <div className="Header shadow-md rounded-md p-2 flex justify-between items-center text-right">
           <div className="Breadcrumb">
             <Breadcrumbs>
               <Link
                 to={"/"}
-                className="opacity-60 text-black  text-sm font-medium  lg:text-base lg:font-extrabold "
+                className="opacity-60 text-black text-base font-bold"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -93,10 +92,22 @@ const AllInvoices = () => {
                 </svg>
               </Link>
               <Link
-                to={"/AllInvoices"}
-                className="  text-sm font-medium  lg:text-base lg:font-extrabold "
+                to="/AllInvoices"
+                className="text-xs font-medium lg:text-base lg:font-extrabold"
               >
                 <span>{t("invoices")}</span>
+              </Link>
+              <Link
+                to={`/invoice/${id}`}
+                className="text-xs font-medium lg:text-base lg:font-extrabold"
+              >
+                <span>{t("invoice")}</span>
+              </Link>
+              <Link
+                to={`/payment/invoice/${id}`}
+                className="text-xs font-medium lg:text-base lg:font-extrabold"
+              >
+                <span>{t("paymentForInvoice")}</span>
               </Link>
             </Breadcrumbs>
           </div>
@@ -147,7 +158,7 @@ const AllInvoices = () => {
                     id="SelectFilter"
                     className="select w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
                     required
-                    onChange={(e) => handleFilterChange(e)}
+                    onChange={(e) => handleFilterChange(e.target.value)}
                   >
                     <Option value="pharmacy">{t("pharmacy")}</Option>
                     <Option value="company">{t("companyName")}</Option>
@@ -166,7 +177,7 @@ const AllInvoices = () => {
                     variant="standard"
                     className="Input w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
                     placeholder={t("search")}
-                    onChange={(e) => handleSearchChange(e)}
+                    onChange={handleSearchChange}
                   />
                 </div>
               </DialogBody>
@@ -194,73 +205,63 @@ const AllInvoices = () => {
           </div>
         </div>
         {loading ? (
-          <div className="flex items-center justify-center mt-5">
+          <div className="flex items-center justify-center">
             <Loader />
           </div>
-        ) : (
-          <div className="content">
-            {invoices.length > 0 ? (
-              <>
-                {invoices.map((invoice) => (
-                  <Link
-                    key={invoice._id}
-                    to={`/invoice/${invoice._id}`}
-                    className="InvoiceItem shadow-md p-2 m-2 flex items-center gap-3 rounded-3xl"
-                  >
-                    <div className="logo">
-                      <span>
-                        <img
-                          src={InvoiceImage}
-                          width={100}
-                          height={100}
-                          className="InvoiceImage"
-                          alt="Invoice Image"
-                        />
-                      </span>
-                    </div>
-                    <div>
-                      <p className="text-white">
-                        <span className="font-bold text-base">
-                          {t("amount")}:
-                        </span>{" "}
-                        {invoice.amount}
-                      </p>
-                      <p className="text-white">
-                        <span className="font-bold text-base">
-                          {t("orderStatus")}:
-                        </span>{" "}
-                        {invoice.orderStatus}
-                      </p>
-                      <p className="text-white">
-                        <span className="font-bold text-base">
-                          {t("type")}:
-                        </span>
-                        {invoice.invoiceType}
-                      </p>
-                      <p className="text-white">
-                        <span className="font-bold text-base">
-                          {t("status")}:
-                        </span>
-                        {invoice.invoiceStatus}
-                      </p>
-                    </div>
-                  </Link>
-                ))}
-                <div className="flex items-center justify-center gap-4">
-                  <Pagination
-                    page={page}
-                    totalPages={totalPages}
-                    nextPage={nextPage}
-                    prevPage={prevPage}
-                    goToPage={goToPage}
-                  />
+        ) : payments.length > 0 ? (
+          <>
+            {payments.map((payment) => (
+              <Link
+                key={payment._id}
+                to={`/payment/${payment._id}`}
+                className="InvoiceItem shadow-md p-2 m-2 flex items-center gap-3 rounded-3xl"
+              >
+                <div className="logo">
+                  <span>
+                    <img
+                      src={Img}
+                      width={100}
+                      height={100}
+                      className="InvoiceImage"
+                      alt="Invoice Image"
+                    />
+                  </span>
                 </div>
-              </>
-            ) : (
-              <div className="text-center flex  justify-center items-center">
-                <p className="text-gray-500">{t("thersIsNoData")}</p>
-              </div>
-            )}
+                <div>
+                  <p className="text-white">
+                    <span className="font-bold text-base mx-2">
+                      {t("amount")}:
+                    </span>
+                    {payment.amount}
+                  </p>
+                  <p className="text-white">
+                    <span className="font-bold text-base mx-2">
+                      {t("status")}:
+                    </span>
+                    {payment.status.toString()}
+                  </p>
+                  <p className="text-white">
+                    <span className="font-bold text-base mx-2">
+                      {t("date")}:
+                    </span>
+                    {new Date(payment.paymentDate).toLocaleDateString()}
+                  </p>
+                </div>
+              </Link>
+            ))}
+            <div className="flex items-center justify-center gap-4">
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                nextPage={nextPage}
+                prevPage={prevPage}
+                goToPage={goToPage}
+              />
+            </div>
+          </>
+        ) : (
+          <div className="flex items-center justify-center">
+            <p>{t("noPaymentsFound")}</p>
           </div>
         )}
       </ContentWrapper>
@@ -268,4 +269,4 @@ const AllInvoices = () => {
   );
 };
 
-export default AllInvoices;
+export default PaymentsByInvoice;

@@ -104,7 +104,7 @@
   "pharmacyEmail": "البريد الإلكتروني للصيدلية",
   "pharmacyBalance": "رصيد الصيدلية",
   "totalPaid": "المدفوع",
-"companyName": "اسم الشركة",
+  "companyName": "اسم الشركة",
   "productName": "اسم المنتج",
   "quantity": "الكمية",
   "create": "انشاء",
@@ -133,5 +133,7 @@
   "Alamal": "الامل",
   "Home": "الرئيسيه",
   "YouDontHaveAccount": "ليس لديك حساب، يجب أن تنشئ حسابًا أولاً!",
-  "details" : "التفاصيل"
+  "details": "التفاصيل",
+  "paymentForInvoice": " المدفوعات الخاصه بالفاتورة ",
+  "noPaymentsFound": "لا توجد مدفوعات خاصه بهذه الفاتورة"
 }

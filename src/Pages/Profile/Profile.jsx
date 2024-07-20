@@ -50,7 +50,7 @@ const Profile = () => {
         ) : user ? (
           <>
             <div className="title text-center">
-              <h1 className="font-bold text-2xl">My Profile</h1>
+              <h1 className="font-bold text-2xl">{t("myProfile")}</h1>
             </div>
             <div className="flex flex-col mt-5">
               <div className="flex flex-col md:flex-row items-center justify-between">

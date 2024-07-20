@@ -17,7 +17,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import usePagination from "../../hooks/UsePagination";
 import { getAllPayments, getFilteredPayments } from "../../services/api";
-import InvoiceImage from "../../assets/item.png";
+import Image from "../../assets/dollar.png";
 import Pagination from "../../components/Pagination/Pagination";
 import Loader from "../../components/Loader/Loader";
 
@@ -78,7 +78,7 @@ const AllPayments = () => {
             <Breadcrumbs>
               <Link
                 to={"/"}
-                className="opacity-60 text-black text-base font-bold"
+                className="opacity-60 text-black text-sm font-medium  lg:text-base lg:font-extrabold "
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -89,7 +89,10 @@ const AllPayments = () => {
                   <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
                 </svg>
               </Link>
-              <Link to={"/AllPayments"} className="  text-base font-bold">
+              <Link
+                to={"/AllPayments"}
+                className=" text-sm font-medium  lg:text-base lg:font-extrabold "
+              >
                 <span>{t("payment")}</span>
               </Link>
             </Breadcrumbs>
@@ -198,13 +201,13 @@ const AllPayments = () => {
                 {Payment.map((payment) => (
                   <Link
                     key={Payment._id}
-                    to={`/invoice/${Payment._id}`}
+                    to={`/AllPayments/${Payment._id}`}
                     className="InvoiceItem shadow-md p-2 m-2 flex items-center gap-3 rounded-3xl"
                   >
                     <div className="logo">
                       <span>
                         <img
-                          src={InvoiceImage}
+                          src={Image}
                           width={100}
                           height={100}
                           className="InvoiceImage"

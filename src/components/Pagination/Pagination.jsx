@@ -62,10 +62,10 @@ const Pagination = ({ page, totalPages, nextPage, prevPage, goToPage }) => {
   );
 
   return (
-    <div className="flex items-center justify-center gap-4">
+    <div className="flex items-center justify-center gap-1">
       <Button
         variant="text"
-        className="flex items-center gap-2 text-black"
+        className="flex items-center gap-1 text-black"
         onClick={prevPage}
         disabled={page === 1}
       >
@@ -75,10 +75,10 @@ const Pagination = ({ page, totalPages, nextPage, prevPage, goToPage }) => {
         />{" "}
         {t("previous")}
       </Button>
-      <div className="flex items-center gap-2">{getPageItems()}</div>
+      <div className="flex items-center gap-1">{getPageItems()}</div>
       <Button
         variant="text"
-        className="flex items-center gap-2 text-black"
+        className="flex items-center gap-1 text-black"
         onClick={nextPage}
         disabled={page === totalPages}
       >

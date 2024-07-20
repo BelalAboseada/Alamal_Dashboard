@@ -1,28 +1,27 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import ContentWrapper from "../../components/ContentWrapper/contentWrapper";
-import { getInvoice } from "../../services/api";
+import { getPayment } from "../../services/api";
 import Loader from "../../components/Loader/Loader";
 import { t } from "i18next";
 import { NoSymbolIcon } from "@heroicons/react/24/solid";
 import { Breadcrumbs } from "@material-tailwind/react";
-import InvoiceImage from "../../assets/web-design-invoice.webp";
+import PaymentImage from "../../assets/dollar.png";
 import "./style.scss";
 import Button from "../../components/UI/Button";
 import {} from "react-router-dom";
-
-const Invoice = ({ invoiceId, companyId, createdBy }) => {
+const PaymentDetails = () => {
   let { id } = useParams();
-  const [invoice, setInvoice] = useState(null);
+  const [Payment, setPayment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [enlargedImage, setEnlargedImage] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getInvoice(id);
-        setInvoice(data.results);
-        console.log("Fetched invoice:", data);
+        const data = await getPayment(id);
+        setPayment(data.results);
+        console.log("Fetched Payment:", data);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -41,21 +40,21 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
     setEnlargedImage(null);
   };
   const data = {
-    invoiceId: id,
-    companyId: invoice?.company?._id,
-    createdBy: invoice?.createdBy?._id,
+    PaymentId: id,
+    companyId: Payment?.company?._id,
+    createdBy: Payment?.createdBy?._id,
   };
 
   return (
-    <div className="Invoice" key={id}>
+    <div className="Payment" key={id}>
       <ContentWrapper>
         {loading ? (
           <div className="flex items-center justify-center">
             <Loader />
           </div>
-        ) : invoice ? (
-          <div className="invoice-details">
-            <h1 className="Title">{t("invoicesDetails")}</h1>
+        ) : Payment ? (
+          <div className="Payment-details">
+            <h1 className="Title">{t("PaymentsDetails")}</h1>
             <div className="Header shadow-md rounded-md p-2 flex justify-between items-center text-right">
               <div className="Breadcrumb">
                 <Breadcrumbs>
@@ -73,39 +72,39 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
                     </svg>
                   </Link>
                   <Link
-                    to="/AllInvoices"
+                    to="/AllPayments"
                     className="text-sm font-medium  lg:text-base lg:font-extrabold  "
                   >
-                    <span>{t("invoices")}</span>
+                    <span>{t("Payments")}</span>
                   </Link>
 
                   <Link
-                    to={`/invoice/${id}`}
+                    to={`/Payment/${id}`}
                     className="text-sm font-medium  lg:text-base lg:font-extrabold  "
                   >
-                    <span>{t("invoice")}</span>
+                    <span>{t("Payment")}</span>
                   </Link>
                 </Breadcrumbs>
               </div>
             </div>
             <div className="content grid grid-cols-12 gap-5 mt-5">
               <div className="col-span-12 md:col-span-6 lg:col-span-4 flex items-center justify-center">
-                <div className="InvoiceImg">
+                <div className="PaymentImg">
                   <img
-                    alt="invoice"
+                    alt="Payment"
                     className="rounded-md m-3 shadow-lg bg-cover clickable-image"
-                    src={InvoiceImage}
+                    src={PaymentImage}
                     width={280}
                     height={280}
-                    onClick={() => openImageModal(InvoiceImage)}
+                    onClick={() => openImageModal(PaymentImage)}
                   />
                 </div>
               </div>
               <div className="col-span-12 md:col-span-6 lg:col-span-8 flex   flex-col items-center text-right  md:items-start  mt-6">
                 <div className="flex gap-8 items-center my-2 w-full">
-                  <div className="InvoiceId flex gap-1 py-1">
+                  <div className="PaymentId flex gap-1 py-1">
                     <p className="font-normal text-base mx-1">
-                      <strong>{t("invoiceId")}:</strong>
+                      <strong>{t("PaymentId")}:</strong>
                     </p>
                     <p className="font-extrabold  text-base text-black">{id}</p>
                   </div>
@@ -116,7 +115,7 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
                       <strong>{t("comment")}:</strong>
                     </p>
                     <p className="font-extrabold  text-base text-black">
-                      {invoice.dropComment}
+                      {Payment.dropComment}
                     </p>
                   </div>
                 </div>
@@ -126,7 +125,7 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
                       <strong>{t("note")}:</strong>
                     </p>
                     <p className="font-extrabold  text-base text-black">
-                      {invoice.dropStatus}
+                      {Payment.dropStatus}
                     </p>
                   </div>
                 </div>
@@ -136,17 +135,17 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
                       <strong>{t("amount")}:</strong>
                     </p>
                     <p className="font-extrabold  text-base text-black">
-                      {invoice.amount}
+                      {Payment.amount}
                     </p>
                   </div>
                 </div>
                 <div className="flex gap-8    items-center my-2   w-full">
-                  <div className="invoiceStatus flex gap-1  py-1  ">
+                  <div className="PaymentStatus flex gap-1  py-1  ">
                     <p className="font-normal text-base mx-1">
-                      <strong>{t("invoiceStatus")}:</strong>
+                      <strong>{t("PaymentStatus")}:</strong>
                     </p>
                     <p className="font-extrabold  text-base text-black">
-                      {invoice.invoiceStatus}
+                      {Payment.PaymentStatus}
                     </p>
                   </div>
                   <div className="orderStatus flex gap-1  py-1  ">
@@ -154,7 +153,7 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
                       <strong>{t("orderStatus")}:</strong>
                     </p>
                     <p className="font-extrabold  text-base text-black">
-                      {invoice.orderStatus}
+                      {Payment.orderStatus}
                     </p>
                   </div>
                 </div>
@@ -164,7 +163,7 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
                       <strong>{t("companyName")}:</strong>
                     </p>
                     <p className="font-extrabold  text-base text-black">
-                      {invoice.company.name}
+                      {Payment.company.name}
                     </p>
                   </div>
                   <div className="pharmacy flex gap-1  py-1  ">
@@ -172,7 +171,7 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
                       <strong>{t("pharmacy")}:</strong>
                     </p>
                     <p className="font-extrabold  text-base text-black">
-                      {invoice.pharmacy.name}
+                      {Payment.pharmacy.name}
                     </p>
                   </div>
                 </div>
@@ -182,7 +181,7 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
                       <strong>{t("driver")}:</strong>
                     </p>
                     <p className="font-extrabold  text-base text-black">
-                      {invoice.driver.name}
+                      {Payment.driver.name}
                     </p>
                   </div>
                   <div className="CreatedBy flex gap-1  py-1 ">
@@ -190,7 +189,7 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
                       <strong>{t("createdBy")}:</strong>
                     </p>
                     <p className="font-extrabold  text-base text-black">
-                      {invoice.createdBy.name}
+                      {Payment.createdBy.name}
                     </p>
                   </div>
                 </div>
@@ -200,14 +199,14 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
                       <strong>{t("date")}:</strong>
                     </p>
                     <p className="font-extrabold  text-base text-black">
-                      {new Date(invoice.date).toLocaleDateString()}
+                      {new Date(Payment.date).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
                 <div className="flex gap-8   items-center my-2   w-full">
                   <Button>
                     <Link
-                      to={`/MakePayment?invoiceId=${data.invoiceId}&companyId=${data.companyId}&createdById=${data.createdBy}`}
+                      to={`/MakePayment?PaymentId=${data.PaymentId}&companyId=${data.companyId}&createdById=${data.createdBy}`}
                       className="text-white w-full"
                     >
                       {t("createPayment")}
@@ -215,7 +214,7 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
                   </Button>
                   <Button>
                     <Link
-                      to={`/payment/invoice/${id}`}
+                      to={`/payment/Payment/${id}`}
                       className="text-white w-full"
                     >
                       {t("payment")}
@@ -232,7 +231,7 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
             </span>
             <p>
               <strong className="font-extrabold  text-2xl">
-                Invoice not found
+                Payment not found
               </strong>
             </p>
           </div>
@@ -248,7 +247,7 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
               <img
                 className="enlarged-image"
                 src={enlargedImage}
-                alt="enlarged-invoice"
+                alt="enlarged-Payment"
                 onClick={(e) => e.stopPropagation()}
               />
             </div>
@@ -259,4 +258,4 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
   );
 };
 
-export default Invoice;
+export default PaymentDetails;

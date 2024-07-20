@@ -133,5 +133,7 @@
   "Home": "Home",
   "invoice": "Invoice",
   "YouDontHaveAccount": "You Don`t Have Account, You Should Create Account First!",
-  "details": "Details"
+  "details": "Details",
+  "paymentForInvoice": "Payment For Invoice ",
+  "noPaymentsFound": "No Payments For This Invoice "
 }

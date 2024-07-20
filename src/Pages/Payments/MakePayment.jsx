@@ -30,11 +30,10 @@ const MakePayment = () => {
   const [repsLoading, setRepsLoading] = useState(true);
 
   const location = useLocation();
-     const params = new URLSearchParams(location.search);
-     const invoiceId = params.get("invoiceId");
-     const companyId = params.get("companyId");
-     const createdById = params.get("createdById");
-
+  const params = new URLSearchParams(location.search);
+  const invoiceId = params.get("invoiceId");
+  const companyId = params.get("companyId");
+  const createdById = params.get("createdById");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,39 +69,48 @@ const MakePayment = () => {
     }
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!amount || !selectedPharmacy || !date || !status || !selectedRep) {
-    toast.error("Please fill out all required fields.", options);
-    return;
-  }
-
-  try {
-    const paymentData = {
-      invoice: invoiceId,
-      company: companyId,
-      createdBy: createdById,
-      amount :parseFloat(amount),
-      pharmacy: selectedPharmacy,
-      rep: selectedRep,
-      paymentDate: date ? format(date, "yyyy-MM-dd") : null,
-      status,
-    };
-
-    console.log("Payment Data :", paymentData);
-
-    const response = await CreatePayment(paymentData);
-
-    if (response) {
-      console.log("Payment Made Successfully!", response);
-      toast.success("Payment made successfully!", options);
+    if (!amount || !selectedPharmacy || !date || !status || !selectedRep) {
+      toast.error("Please fill out all required fields.", options);
+      return;
     }
-  } catch (err) {
-    console.error("Error making payment:", err);
-    toast.error("Error making payment!");
-  }
-};
+
+    try {
+      const paymentData = {
+        invoice: invoiceId,
+        company: companyId,
+        createdBy: createdById,
+        amount: parseFloat(amount),
+        pharmacy: selectedPharmacy,
+        rep: selectedRep,
+        paymentDate: date ? format(date, "yyyy-MM-dd") : null,
+        status,
+      };
+
+      console.log("Payment Data :", paymentData);
+
+      const response = await CreatePayment(paymentData);
+
+      if (response) {
+        console.log("Payment Made Successfully!", response);
+        toast.success(t("paymentAddSuccessfully"), options);
+        clearFormFields();
+      }
+    } catch (err) {
+      console.error("Error making payment:", err);
+      toast.error("Error making payment!");
+    }
+  };
+
+  const clearFormFields = () => {
+    setSelectedPharmacy("");
+    setSelectedRep("");
+    setAmount("");
+    setStatus("");
+    setDate(null);
+  };
 
   return (
     <div className="MakePayment">
