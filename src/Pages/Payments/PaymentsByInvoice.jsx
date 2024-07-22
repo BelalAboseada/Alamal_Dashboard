@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import ContentWrapper from "../../components/ContentWrapper/contentWrapper";
-import { getFilteredPayments, getPaymentsByInvoice } from "../../services/api";
+import {  getFilteredPaymentsByInvoice, getPaymentsByInvoice } from "../../services/api";
 import Loader from "../../components/Loader/Loader";
 import { t } from "i18next";
 import "./style.scss";
-import {
-  Breadcrumbs,
+import {  Breadcrumbs,
   Button,
   Dialog,
   DialogBody,
@@ -27,7 +26,6 @@ const PaymentsByInvoice = () => {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
-
   const [filterType, setFilterType] = useState("");
   const [filterValue, setFilterValue] = useState("");
   const { page, nextPage, prevPage, goToPage, totalPages, updateTotalPages } =
@@ -51,18 +49,17 @@ const PaymentsByInvoice = () => {
     fetchPayments();
   }, [id]);
 
-  const handleFilterChange = (value) => {
-    setFilterType(value);
-  };
+ const handleFilterChange = (value) => {
+   setFilterType(value);
+ };
 
-  const handleSearchChange = (e) => {
-    setFilterValue(e.target.value);
-  };
-
+ const handleSearchChange = (e) => {
+   setFilterValue(e.target.value);
+ };
   const handleFilterSubmit = async () => {
     setOpen(false);
     try {
-      const data = await getFilteredPayments(filterType, filterValue);
+      const data = await getFilteredPaymentsByInvoice(filterType, filterValue,id );
       setPayments(data.results);
       updateTotalPages(data.count, data.results.length);
       console.log("Filtered payments:", data.results);
@@ -158,7 +155,7 @@ const PaymentsByInvoice = () => {
                     id="SelectFilter"
                     className="select w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
                     required
-                    onChange={(e) => handleFilterChange(e.target.value)}
+                    onChange={(e) => handleFilterChange(e)}
                   >
                     <Option value="pharmacy">{t("pharmacy")}</Option>
                     <Option value="company">{t("companyName")}</Option>
@@ -212,8 +209,7 @@ const PaymentsByInvoice = () => {
           <>
             {payments.map((payment) => (
               <Link
-                key={payment._id}
-                to={`/payment/${payment._id}`}
+                key={payment._id}  
                 className="InvoiceItem shadow-md p-2 m-2 flex items-center gap-3 rounded-3xl"
               >
                 <div className="logo">
@@ -233,6 +229,12 @@ const PaymentsByInvoice = () => {
                       {t("amount")}:
                     </span>
                     {payment.amount}
+                  </p>
+                  <p className="text-white">
+                    <span className="font-bold text-base mx-2">
+                      {t("pharmacy")}:
+                    </span>
+                    {payment.pharmacy.name}
                   </p>
                   <p className="text-white">
                     <span className="font-bold text-base mx-2">

@@ -33,7 +33,6 @@
   align-items: center;
 }
 
-
 .modal {
   background-color: white;
   padding: 20px;
@@ -45,7 +44,6 @@
   overflow: hidden;
 }
 
-
 .close {
   position: absolute;
   top: 10px;
@@ -55,11 +53,22 @@
   cursor: pointer;
 }
 
-
 .enlarged-image {
   width: 100%;
   height: auto;
   max-height: 90vh;
   object-fit: contain;
   border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  .Button_Wrapper {
+    flex-direction: column !important;
+    .Btn{
+      width: 100%;
+    }
+  }
+  .InvoiceImg img{
+    width: 350px;
+  }
 }

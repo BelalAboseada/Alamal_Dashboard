@@ -135,5 +135,7 @@
   "YouDontHaveAccount": "You Don`t Have Account, You Should Create Account First!",
   "details": "Details",
   "paymentForInvoice": "Payment For Invoice ",
-  "noPaymentsFound": "No Payments For This Invoice "
+  "noPaymentsFound": "No Payments For This Invoice ",
+  "paymentStatus" : "Payment Status",
+  "products": "products"
 }

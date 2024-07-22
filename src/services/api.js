@@ -35,6 +35,32 @@ export const signUp = async (
     throw error.response ? error.response.data : { message: "Network error" };
   }
 };
+
+// get All Users
+export const getDrivers = async () => {
+  try {
+    const response = await axios.get(`${ApiUrl}/users`);
+    return response.data.results.filter((user) => user.role === "driver");
+  } catch (error) {
+    throw error.response ? error.response.data : { message: "Network error" };
+  }
+};
+export const getPharmacies = async () => {
+  try {
+    const response = await axios.get(`${ApiUrl}/users`);
+    return response.data.results.filter((user) => user.role === "pharmacy");
+  } catch (error) {
+    throw error.response ? error.response.data : { message: "Network error" };
+  }
+};
+export const getReps = async () => {
+  try {
+    const response = await axios.get(`${ApiUrl}/users`);
+    return response.data.results.filter((user) => user.role === "rep");
+  } catch (error) {
+    throw error.response ? error.response.data : { message: "Network error" };
+  }
+};
 // Make Invoice
 export const uploadInvoiceImage = async (invoiceImage) => {
   try {
@@ -76,32 +102,6 @@ export const makeInvoice = async (invoiceData, Image) => {
 
     const response = await axios.post(`${ApiUrl}/invoice`, fullInvoiceData);
     return response.data;
-  } catch (error) {
-    throw error.response ? error.response.data : { message: "Network error" };
-  }
-};
-
-// get All Users
-export const getDrivers = async () => {
-  try {
-    const response = await axios.get(`${ApiUrl}/users`);
-    return response.data.results.filter((user) => user.role === "driver");
-  } catch (error) {
-    throw error.response ? error.response.data : { message: "Network error" };
-  }
-};
-export const getPharmacies = async () => {
-  try {
-    const response = await axios.get(`${ApiUrl}/users`);
-    return response.data.results.filter((user) => user.role === "pharmacy");
-  } catch (error) {
-    throw error.response ? error.response.data : { message: "Network error" };
-  }
-};
-export const getReps = async () => {
-  try {
-    const response = await axios.get(`${ApiUrl}/users`);
-    return response.data.results.filter((user) => user.role === "rep");
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };
   }
@@ -154,7 +154,7 @@ export const CreatePayment = async (paymentData) => {
   }
 };
 
-// All Payments 
+// All Payments
 export const getAllPayments = async (page) => {
   try {
     const response = await axios.get(`${ApiUrl}/payment?page=${page}`);
@@ -177,20 +177,40 @@ export const getFilteredPayments = async (filterType, filterValue) => {
     throw error.response ? error.response.data : { message: "Network error" };
   }
 };
-// get Payment
-export const getPayment = async (id) => {
+export const getFilteredPaymentsByInvoice = async (
+  filterType,
+  filterValue,
+  id
+) => {
   try {
-    const response = await axios.get(`${ApiUrl}/payment/user/${id}`);
+    const response = await axios.get(
+      `${ApiUrl}/payment/invoice/${id}?filterType=${filterType}&filterValue=${filterValue}`
+    );
+    console.log("Response:", response);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error.response ? error.response.data : { message: "Network error" };
+  }
+};
+
+// getPaymentsByInvoice
+export const getPaymentsByInvoice = async (id) => {
+  try {
+    const response = await axios.get(`${ApiUrl}/payment/invoice/${id}`);
+    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };
   }
 };
-// getPaymentsForInvoice
-export const getPaymentsByInvoice = async (id) => {
+
+// get ALl Products
+
+export const getAllProducts = async () => {
   try {
-    const response = await axios.get(`${ApiUrl}/payment/invoice/${id}`);
-    console.log(response.data);
+    const response = await axios.get(`${ApiUrl}/product`);
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };

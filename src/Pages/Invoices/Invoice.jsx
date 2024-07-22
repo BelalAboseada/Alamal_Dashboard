@@ -61,7 +61,7 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
                 <Breadcrumbs>
                   <Link
                     to="/"
-                    className="opacity-60 text-black text-sm font-medium  lg:text-base lg:font-extrabold "
+                    className="opacity-60 text-black text-sm font-medium  lg:text-base lg:font-normal "
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -74,14 +74,14 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
                   </Link>
                   <Link
                     to="/AllInvoices"
-                    className="text-sm font-medium  lg:text-base lg:font-extrabold  "
+                    className="text-sm font-medium  lg:text-base lg:font-normal  "
                   >
                     <span>{t("invoices")}</span>
                   </Link>
 
                   <Link
                     to={`/invoice/${id}`}
-                    className="text-sm font-medium  lg:text-base lg:font-extrabold  "
+                    className="text-sm font-medium  lg:text-base lg:font-normal  "
                   >
                     <span>{t("invoice")}</span>
                   </Link>
@@ -102,50 +102,50 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
                 </div>
               </div>
               <div className="col-span-12 md:col-span-6 lg:col-span-8 flex   flex-col items-center text-right  md:items-start  mt-6">
-                <div className="flex gap-8 items-center my-2 w-full">
+                <div className="flex gap-20 items-center my-1 w-full">
                   <div className="InvoiceId flex gap-1 py-1">
-                    <p className="font-normal text-base mx-1">
+                    <p className="font-bold first-line: text-base mx-1">
                       <strong>{t("invoiceId")}:</strong>
                     </p>
-                    <p className="font-extrabold  text-base text-black">{id}</p>
+                    <p className="font-normal  text-base text-black">{id}</p>
                   </div>
                 </div>
-                <div className="flex  gap-8  items-center my-2   w-full ">
+                <div className="flex  gap-20  items-center my-1   w-full ">
                   <div className="dropComment flex gap-1  py-1  ">
-                    <p className="font-normal text-base mx-1">
+                    <p className="font-bold text-base mx-1">
                       <strong>{t("comment")}:</strong>
                     </p>
-                    <p className="font-extrabold  text-base text-black">
+                    <p className="font-normal  text-base text-black">
                       {invoice.dropComment}
                     </p>
                   </div>
                 </div>
-                <div className="flex  gap-8  items-center my-2   w-full ">
+                <div className="flex  gap-20  items-center my-1   w-full ">
                   <div className="dropStatus flex gap-1  py-1  ">
                     <p className="font-normal text-base mx-1">
                       <strong>{t("note")}:</strong>
                     </p>
-                    <p className="font-extrabold  text-base text-black">
+                    <p className="font-normal  text-base text-black">
                       {invoice.dropStatus}
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-8    items-center my-2   w-full">
+                <div className="flex gap-20    items-center my-1   w-full">
                   <div className="amount flex gap-1  py-1  ">
-                    <p className="font-normal text-base mx-1">
+                    <p className="font-bold text-base mx-1">
                       <strong>{t("amount")}:</strong>
                     </p>
-                    <p className="font-extrabold  text-base text-black">
+                    <p className="font-normal  text-base text-black">
                       {invoice.amount}
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-8    items-center my-2   w-full">
+                <div className="flex gap-20    items-center my-1   w-full">
                   <div className="invoiceStatus flex gap-1  py-1  ">
-                    <p className="font-normal text-base mx-1">
+                    <p className="font-bold text-base mx-1">
                       <strong>{t("invoiceStatus")}:</strong>
                     </p>
-                    <p className="font-extrabold  text-base text-black">
+                    <p className="font-normal  text-base text-black">
                       {invoice.invoiceStatus}
                     </p>
                   </div>
@@ -153,59 +153,59 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
                     <p className="font-normal text-base mx-1">
                       <strong>{t("orderStatus")}:</strong>
                     </p>
-                    <p className="font-extrabold  text-base text-black">
+                    <p className="font-normal  text-base text-black">
                       {invoice.orderStatus}
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-8   items-center my-2   w-full">
+                <div className="flex gap-20   items-center my-1   w-full">
                   <div className="companyName flex gap-1  py-1  ">
-                    <p className="ont-normal text-base mx-1">
+                    <p className="font-bold text-base mx-1">
                       <strong>{t("companyName")}:</strong>
                     </p>
-                    <p className="font-extrabold  text-base text-black">
+                    <p className="font-normal  text-base text-black">
                       {invoice.company.name}
                     </p>
                   </div>
                   <div className="pharmacy flex gap-1  py-1  ">
-                    <p className="font-normal text-base mx-1">
+                    <p className="font-bold text-base mx-1">
                       <strong>{t("pharmacy")}:</strong>
                     </p>
-                    <p className="font-extrabold  text-base text-black">
+                    <p className="font-normal  text-base text-black">
                       {invoice.pharmacy.name}
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-8   items-center my-2   w-full">
+                <div className="flex gap-20   items-center my-1   w-full">
                   <div className="driver flex gap-1  py-1  ">
-                    <p className="font-normal text-base mx-1">
+                    <p className="font-bold text-base mx-1">
                       <strong>{t("driver")}:</strong>
                     </p>
-                    <p className="font-extrabold  text-base text-black">
+                    <p className="font-normal  text-base text-black">
                       {invoice.driver.name}
                     </p>
                   </div>
                   <div className="CreatedBy flex gap-1  py-1 ">
-                    <p className="font-normal text-base mx-1">
+                    <p className="font-bold text-base mx-1">
                       <strong>{t("createdBy")}:</strong>
                     </p>
-                    <p className="font-extrabold  text-base text-black">
+                    <p className="font-normal  text-base text-black">
                       {invoice.createdBy.name}
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-8   items-center my-2   w-full">
+                <div className="flex gap-20   items-center my-1   w-full">
                   <div className="CreatedAt flex gap-1  py-1  ">
-                    <p className="font-normal text-base mx-1">
+                    <p className="font-bold text-base mx-1">
                       <strong>{t("date")}:</strong>
                     </p>
-                    <p className="font-extrabold  text-base text-black">
+                    <p className="font-normal  text-base text-black">
                       {new Date(invoice.date).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-8   items-center my-2   w-full">
-                  <Button>
+                <div className="flex items-center my-1  w-full Button_Wrapper">
+                  <Button className={"w-48"}>
                     <Link
                       to={`/MakePayment?invoiceId=${data.invoiceId}&companyId=${data.companyId}&createdById=${data.createdBy}`}
                       className="text-white w-full"
@@ -213,7 +213,7 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
                       {t("createPayment")}
                     </Link>
                   </Button>
-                  <Button>
+                  <Button className={"w-48"}>
                     <Link
                       to={`/payment/invoice/${id}`}
                       className="text-white w-full"
@@ -231,7 +231,7 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
               <NoSymbolIcon className="w-56 h-56" />
             </span>
             <p>
-              <strong className="font-extrabold  text-2xl">
+              <strong className="font-normal  text-2xl">
                 Invoice not found
               </strong>
             </p>

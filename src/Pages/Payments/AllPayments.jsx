@@ -50,6 +50,7 @@ const AllPayments = () => {
 
     fetchData();
   }, [page]);
+
   const handleFilterChange = (value) => {
     setFilterType(value);
   };
@@ -57,18 +58,20 @@ const AllPayments = () => {
   const handleSearchChange = (e) => {
     setFilterValue(e.target.value);
   };
+
   const handleFilterSubmit = async () => {
     setOpen(false);
     try {
       const data = await getFilteredPayments(filterType, filterValue);
       setPayment(data.results);
       updateTotalPages(data.count, data.results.length);
-      console.log("Filtered invoices:", data.results);
+      console.log("Filtered Payments :", data.results);
       console.log("Total Pages:", totalPages);
     } catch (error) {
       console.error("Error fetching filtered data:", error);
     }
   };
+
   return (
     <div className="AllInvoices">
       <h1 className="Title">{t("payment")}</h1>
@@ -144,7 +147,7 @@ const AllPayments = () => {
                     id="SelectFilter"
                     className="select w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
                     required
-                    onChange={(e) => handleFilterChange(e)}
+                    onChange={(e) => handleFilterChange(e.target.value)}
                   >
                     <Option value="pharmacy">{t("pharmacy")}</Option>
                     <Option value="company">{t("companyName")}</Option>
@@ -200,8 +203,8 @@ const AllPayments = () => {
               <>
                 {Payment.map((payment) => (
                   <Link
-                    key={Payment._id}
-                    to={`/AllPayments/${Payment._id}`}
+                    key={payment._id}
+                   
                     className="InvoiceItem shadow-md p-2 m-2 flex items-center gap-3 rounded-3xl"
                   >
                     <div className="logo">
@@ -218,26 +221,32 @@ const AllPayments = () => {
                     <div>
                       <p className="text-white">
                         <span className="font-bold text-base mx-2">
+                          {t("id")}:
+                        </span>
+                        {payment._id}
+                      </p>
+                      <p className="text-white">
+                        <span className="font-bold text-base mx-2">
                           {t("amount")}:
                         </span>
                         {payment.amount}
                       </p>
                       <p className="text-white">
                         <span className="font-bold text-base mx-2">
-                          {t("status")}:
+                          {t("pharmacy")}:
                         </span>
-                        {payment.status.toString()}
+                        {payment.pharmacy.name}
                       </p>
                       <p className="text-white">
                         <span className="font-bold text-base mx-2">
                           {t("date")}:
                         </span>
-                        {new Date(payment.paymentDate).toLocaleDateString()}
+                        {new Date(payment.date).toLocaleDateString()}
                       </p>
                     </div>
                   </Link>
                 ))}
-                <div className="flex items-center justify-center gap-4">
+                <div className="pagination-wrapper py-2 flex justify-center items-center mt-10">
                   <Pagination
                     page={page}
                     totalPages={totalPages}
@@ -248,8 +257,8 @@ const AllPayments = () => {
                 </div>
               </>
             ) : (
-              <div className="text-center flex  justify-center items-center">
-                <p className="text-gray-500">{t("thersIsNoData")}</p>
+              <div className="flex items-center justify-center mt-5">
+                <h2>{t("noPaymentsFound")}</h2>
               </div>
             )}
           </div>

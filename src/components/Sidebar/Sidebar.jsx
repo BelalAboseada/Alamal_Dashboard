@@ -133,7 +133,7 @@ export function SidebarWithBurgerMenu() {
             <img src={logo} alt="brand" className="h-8 w-8" />
             <Typography variant="h5">{t("Alamal")}</Typography>
           </div>
-       
+
           <div className="p-2">
             <ButtonGroup color="blue" fullWidth>
               <Button
@@ -202,9 +202,55 @@ export function SidebarWithBurgerMenu() {
                 </List>
               </AccordionBody>
             </Accordion>
-
             <Accordion
               open={open === 2}
+              icon={
+                <ChevronDownIcon
+                  strokeWidth={2.5}
+                  className={`mx-auto h-4 w-4 transition-transform ${
+                    open === 1 ? "rotate-180" : ""
+                  }`}
+                />
+              }
+            >
+              <ListItem className="p-0" selected={open === 2}>
+                <AccordionHeader
+                  onClick={() => handleOpen(2)}
+                  className="border-b-0 p-3"
+                >
+                  <ListItemPrefix>
+                    <BanknotesIcon className="h-5 w-5" />
+                  </ListItemPrefix>
+                  <Typography
+                    color="blue-gray"
+                    className={`mr-auto font-normal ${
+                      isRTL ? "ml-auto mr-0 px-2" : ""
+                    }`}
+                  >
+                    {t("products")}
+                  </Typography>
+                </AccordionHeader>
+              </ListItem>
+              <AccordionBody className="py-1">
+                <List className="p-0">
+                  <ListItem>
+                    <ListItemPrefix>
+                      <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                    </ListItemPrefix>
+                    <Link to={"MakeProduct"}>{t("createProduct")}</Link>
+                  </ListItem>
+                  <ListItem>
+                    <ListItemPrefix>
+                      <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                    </ListItemPrefix>
+                    <Link to={"/AllProducts"}>{t("products")}</Link>
+                  </ListItem>
+                </List>
+              </AccordionBody>
+            </Accordion>
+
+            <Accordion
+              open={open === 3}
               icon={
                 <ChevronDownIcon
                   strokeWidth={2.5}
@@ -214,9 +260,9 @@ export function SidebarWithBurgerMenu() {
                 />
               }
             >
-              <ListItem className="p-0" selected={open === 2}>
+              <ListItem className="p-0" selected={open === 3}>
                 <AccordionHeader
-                  onClick={() => handleOpen(2)}
+                  onClick={() => handleOpen(3)}
                   className="border-b-0 p-3"
                 >
                   <ListItemPrefix>
@@ -244,7 +290,7 @@ export function SidebarWithBurgerMenu() {
               </AccordionBody>
             </Accordion>
             <Accordion
-              open={open === 3}
+              open={open === 4}
               icon={
                 <ChevronDownIcon
                   strokeWidth={2.5}
@@ -254,9 +300,9 @@ export function SidebarWithBurgerMenu() {
                 />
               }
             >
-              <ListItem className="p-0" selected={open === 1}>
+              <ListItem className="p-0" selected={open === 4}>
                 <AccordionHeader
-                  onClick={() => handleOpen(3)}
+                  onClick={() => handleOpen(4)}
                   className="border-b-0 p-3"
                 >
                   <ListItemPrefix>

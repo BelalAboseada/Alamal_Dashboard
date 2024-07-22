@@ -13,7 +13,9 @@ import AllTrans from "../Pages/transactions/AllTrans";
 import MakeTransaction from "../Pages/transactions/MakeTransaction";
 import Invoice from "../Pages/Invoices/Invoice";
 import PaymentsByInvoice from "../Pages/Payments/PaymentsByInvoice";
-import PaymentDetails from "../Pages/Payments/PaymentDetails";
+import AllProducts from "../Pages/Products/AllProducts";
+import Product from "../Pages/Products/Product";
+import CreateProduct from "../Pages/Products/CreateProduct";
 
 const AppRoutes = () => {
   const location = useLocation();
@@ -27,10 +29,12 @@ const AppRoutes = () => {
       <Route path="/MakeInvoice" element={<MakeInvoice />} />
       <Route path="/AllInvoices" element={<AllInvoices />} />
       <Route path="/Invoice/:id" element={<Invoice />} />
+      <Route path="/ALlProducts" element={<AllProducts />} />
+      <Route path="/Product/:id" element={<Product />} />
+      <Route path="/MakeProduct" element={<CreateProduct />} />
       <Route path="/AllPayments" element={<AllPayments />} />
       <Route path="/MakePayment" element={<MakePayment />} />
       <Route path="/payment/invoice/:id" element={<PaymentsByInvoice />} />
-      <Route path="/AllPayments/:id" element={<PaymentDetails />} />
       <Route path="/ArrangeVisits" element={<ArrangeVisits />} />
       <Route path="/AllVisits" element={<AllVisits />} />
       <Route path="/AllTransactions" element={<AllTrans />} />
