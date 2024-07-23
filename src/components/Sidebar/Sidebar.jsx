@@ -102,9 +102,13 @@ export function SidebarWithBurgerMenu() {
   return (
     <>
       <Tooltip
-        className="bg-gray-200 text-black "
+        className="bg-gray-100 text-blue-400 "
         content="ctrl + b for open"
-        placement="right-end"
+        placement="left"
+        animate={{
+          mount: { scale: 1, x: 0 },
+          unmount: { scale: 0, x: -25 },
+        }}
       >
         <IconButton
           className="top-4 mx-3"

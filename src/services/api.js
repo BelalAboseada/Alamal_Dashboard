@@ -207,10 +207,49 @@ export const getPaymentsByInvoice = async (id) => {
 };
 
 // get ALl Products
-
-export const getAllProducts = async () => {
+export const getAllProducts = async (page) => {
   try {
-    const response = await axios.get(`${ApiUrl}/product`);
+    const response = await axios.get(`${ApiUrl}/product?page=${page}`);
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : { message: "Network error" };
+  }
+};
+
+// get filtered products
+export const getFilteredProducts = async (filterType, filterValue) => {
+  try {
+    const response = await axios.get(
+      `${ApiUrl}/product?filterType=${filterType}&filterValue=${filterValue}`
+    );
+    console.log("Response:", response);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error.response ? error.response.data : { message: "Network error" };
+  }
+};
+
+// Add product
+export const addProduct = async (productData) => {
+  try {
+    const response = await axios.post(`${ApiUrl}/product`, productData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (err) {
+    throw err.response ? err.response.data : { message: "Network error" };
+  }
+};
+
+// get Product
+
+export const getProduct = async (id) => {
+  try {
+    const response = await axios.get(`${ApiUrl}/product/${id}`);
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };

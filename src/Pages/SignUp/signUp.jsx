@@ -138,7 +138,7 @@ const SignUp = () => {
                     <Select
                       variant="standard"
                       placeholder="Select a Role"
-                      className="select rounded-md border-0 py-2 shadow-sm outline-none focus:outline-none sm:text-sm sm:leading-6"
+                      className="select w-full rounded-md border-0 p-2 shadow-md  sm:text-sm sm:leading-6"
                       required
                       value={selectedRole}
                       onChange={(e) => setSelectedRole(e)}
@@ -159,7 +159,7 @@ const SignUp = () => {
                     <Select
                       variant="standard"
                       placeholder="Select a Company"
-                      className="select w-full rounded-md border-0 py-2 shadow-sm outline-none focus:outline-none sm:text-sm sm:leading-6"
+                      className="select w-full rounded-md border-0 p-2 shadow-md  sm:text-sm sm:leading-6"
                       required
                       value={selectedCompany}
                       onChange={(e) => setSelectedCompany(e)}

@@ -14,6 +14,7 @@ import {
   Select,
   Option,
   Breadcrumbs,
+  Tooltip,
 } from "@material-tailwind/react";
 import "./style.scss";
 import Loader from "../../components/Loader/Loader";
@@ -71,7 +72,23 @@ const AllInvoices = () => {
       console.error("Error fetching filtered data:", error);
     }
   };
+  const handleKeyUp = (e) => {
+    if (e.key === "Enter") {
+      handleFilterSubmit();
+    }
+  };
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.ctrlKey && e.key === "q") {
+        setOpen((prev) => !prev);
+      }
+    };
 
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
   return (
     <div className="AllInvoices">
       <h1 className="Title">{t("invoices")}</h1>
@@ -101,17 +118,27 @@ const AllInvoices = () => {
             </Breadcrumbs>
           </div>
           <div className="Filter">
-            <h6>
-              <button
-                onClick={handleOpen}
-                className="right-0 font-medium text-base flex gap-1 items-center cursor-pointer"
-              >
-                <span>
-                  <AdjustmentsHorizontalIcon />
-                </span>
-                {t("filter")}
-              </button>
-            </h6>
+            <Tooltip
+              className="bg-gray-100 text-blue-400 "
+              content="ctrl + Q for Quick open"
+              placement="top"
+              animate={{
+                mount: { scale: 1, y: 0 },
+                unmount: { scale: 0, y: 25 },
+              }}
+            >
+              <h6>
+                <button
+                  onClick={handleOpen}
+                  className="right-0 font-medium text-base flex gap-1 items-center cursor-pointer"
+                >
+                  <span>
+                    <AdjustmentsHorizontalIcon />
+                  </span>
+                  {t("filter")}
+                </button>
+              </h6>
+            </Tooltip>
             <Dialog open={open} size="xs" handler={handleOpen}>
               <div className="flex items-center justify-between">
                 <DialogHeader className="flex flex-col items-start">
@@ -166,6 +193,7 @@ const AllInvoices = () => {
                     variant="standard"
                     className="Input w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
                     placeholder={t("search")}
+                    onKeyUp={handleKeyUp}
                     onChange={(e) => handleSearchChange(e)}
                   />
                 </div>
