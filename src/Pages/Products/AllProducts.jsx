@@ -218,7 +218,9 @@ const AllProducts = () => {
           </div>
         </div>
         {loading ? (
-          <Loader />
+          <div className="flex items-center  justify-center">
+            <Loader />
+          </div>
         ) : (
           <div className="content mt-5">
             {Product.length > 0 ? (

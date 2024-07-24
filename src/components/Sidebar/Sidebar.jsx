@@ -10,7 +10,6 @@ import {
   AccordionBody,
   Drawer,
   Card,
-  ButtonGroup,
   Button,
   Tooltip,
 } from "@material-tailwind/react";
@@ -24,7 +23,6 @@ import {
 import {
   ChevronRightIcon,
   ChevronDownIcon,
-
   Bars3Icon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
@@ -139,24 +137,20 @@ export function SidebarWithBurgerMenu() {
           </div>
 
           <div className="p-2">
-            <ButtonGroup color="blue" fullWidth>
-              <Button
-                onClick={() => changeLanguage("ar")}
-                className={`Lang${
-                  isRTL ? "rounded-lg rounded-r-lg rounded-l-none" : ""
-                }`}
-              >
-                العربيه
-              </Button>
-              <Button
-                onClick={() => changeLanguage("en")}
-                className={` Lang${
-                  isRTL ? "rounded-lg rounded-r-none rounded-l-lg" : ""
-                }`}
-              >
-                En
-              </Button>
-            </ButtonGroup>
+            <Button
+              ripple={false}
+              onClick={() => changeLanguage("ar")}
+              className={`Lang w-28 rounded-lg`}
+            >
+              العربيه
+            </Button>
+            <Button
+              ripple={false}
+              onClick={() => changeLanguage("en")}
+              className={` Lang w-28 rounded-lg`}
+            >
+              En
+            </Button>
           </div>
 
           <List className={`${isRTL ? "rtl" : ""}`}>
