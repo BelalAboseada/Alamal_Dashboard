@@ -197,6 +197,7 @@ const AllProducts = () => {
               <DialogFooter className="space-x-2">
                 <Button
                   variant="text"
+                  ripple={false}
                   color="gray"
                   onClick={() => {
                     setFilterType("");
@@ -209,6 +210,7 @@ const AllProducts = () => {
                 <Button
                   variant="gradient"
                   color="blue"
+                  ripple={false}
                   onClick={handleFilterSubmit}
                 >
                   {t("submit")}

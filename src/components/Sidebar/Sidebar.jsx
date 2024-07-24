@@ -19,6 +19,7 @@ import {
   PowerIcon,
   BanknotesIcon,
   EyeIcon,
+  ShoppingCartIcon,
 } from "@heroicons/react/24/solid";
 import {
   ChevronRightIcon,
@@ -110,9 +111,10 @@ export function SidebarWithBurgerMenu() {
       >
         <IconButton
           className="top-4 mx-3"
-          variant="text"
+          variant="outlined"
           size="lg"
           onClick={openDrawer}
+          ripple={false}
         >
           {isDrawerOpen ? (
             <XMarkIcon className="h-8 w-8 stroke-2" />
@@ -165,7 +167,7 @@ export function SidebarWithBurgerMenu() {
                 />
               }
             >
-              <ListItem className="p-0" selected={open === 1}>
+              <ListItem className="p-0" ripple={false} selected={open === 1}>
                 <AccordionHeader
                   onClick={() => handleOpen(1)}
                   className="border-b-0 p-3"
@@ -185,13 +187,13 @@ export function SidebarWithBurgerMenu() {
               </ListItem>
               <AccordionBody className="py-1">
                 <List className="p-0">
-                  <ListItem>
+                  <ListItem ripple={false}>
                     <ListItemPrefix>
                       <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
                     </ListItemPrefix>
                     <Link to={"MakeInvoice"}>{t("createInvoices")}</Link>
                   </ListItem>
-                  <ListItem>
+                  <ListItem ripple={false}>
                     <ListItemPrefix>
                       <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
                     </ListItemPrefix>
@@ -211,13 +213,13 @@ export function SidebarWithBurgerMenu() {
                 />
               }
             >
-              <ListItem className="p-0" selected={open === 2}>
+              <ListItem className="p-0" ripple={false} selected={open === 2}>
                 <AccordionHeader
                   onClick={() => handleOpen(2)}
                   className="border-b-0 p-3"
                 >
                   <ListItemPrefix>
-                    <BanknotesIcon className="h-5 w-5" />
+                    <ShoppingCartIcon className="h-5 w-5" />
                   </ListItemPrefix>
                   <Typography
                     color="blue-gray"
@@ -231,13 +233,13 @@ export function SidebarWithBurgerMenu() {
               </ListItem>
               <AccordionBody className="py-1">
                 <List className="p-0">
-                  <ListItem>
+                  <ListItem ripple={false}>
                     <ListItemPrefix>
                       <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
                     </ListItemPrefix>
                     <Link to={"MakeProduct"}>{t("createProduct")}</Link>
                   </ListItem>
-                  <ListItem>
+                  <ListItem ripple={false}>
                     <ListItemPrefix>
                       <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
                     </ListItemPrefix>
@@ -258,7 +260,7 @@ export function SidebarWithBurgerMenu() {
                 />
               }
             >
-              <ListItem className="p-0" selected={open === 3}>
+              <ListItem className="p-0" ripple={false} selected={open === 3}>
                 <AccordionHeader
                   onClick={() => handleOpen(3)}
                   className="border-b-0 p-3"
@@ -278,7 +280,7 @@ export function SidebarWithBurgerMenu() {
               </ListItem>
               <AccordionBody className="py-1">
                 <List className="p-0">
-                  <ListItem>
+                  <ListItem ripple={false}>
                     <ListItemPrefix>
                       <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
                     </ListItemPrefix>
@@ -298,7 +300,7 @@ export function SidebarWithBurgerMenu() {
                 />
               }
             >
-              <ListItem className="p-0" selected={open === 4}>
+              <ListItem className="p-0" ripple={false} selected={open === 4}>
                 <AccordionHeader
                   onClick={() => handleOpen(4)}
                   className="border-b-0 p-3"
@@ -318,24 +320,24 @@ export function SidebarWithBurgerMenu() {
               </ListItem>
               <AccordionBody className="py-1">
                 <List className="p-0">
-                  <ListItem>
+                  <ListItem ripple={false}>
                     <ListItemPrefix>
                       <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
                     </ListItemPrefix>
-                    <Link to={"/ArrangeVisits"}>{t("arrangeVisits")}</Link>
+                    <Link to={"/AllVisits"}>{t("arrangeVisits")}</Link>
                   </ListItem>
-                  <ListItem>
+                  <ListItem ripple={false}>
                     <ListItemPrefix>
                       <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
                     </ListItemPrefix>
-                    <Link to={"/AllVisits"}>{t("visitDetails")}</Link>
+                    <Link to={"/makeVisit"}>{t("makeVisit")}</Link>
                   </ListItem>
                 </List>
               </AccordionBody>
             </Accordion>
             <hr className="my-2 border-blue-gray-50" />
 
-            <ListItem>
+            <ListItem ripple={false}>
               <ListItemPrefix>
                 <UserCircleIcon className="h-5 w-5" />
               </ListItemPrefix>
@@ -344,14 +346,14 @@ export function SidebarWithBurgerMenu() {
               </Link>
             </ListItem>
             {user ? (
-              <ListItem onClick={handleLogout}>
+              <ListItem ripple={false} onClick={handleLogout}>
                 <ListItemPrefix>
                   <PowerIcon className="h-5 w-5" />
                 </ListItemPrefix>
                 <Link className={`${isRTL ? "px-2" : ""}`}>{t("logout")}</Link>
               </ListItem>
             ) : (
-              <ListItem>
+              <ListItem ripple={false}>
                 <ListItemPrefix>
                   <PowerIcon className="h-5 w-5" />
                 </ListItemPrefix>

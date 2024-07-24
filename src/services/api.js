@@ -255,3 +255,28 @@ export const getProduct = async (id) => {
     throw error.response ? error.response.data : { message: "Network error" };
   }
 };
+
+//  get all visits
+
+export const getAllVisits = async (page) => {
+  try {
+    const response = await axios.get(`${ApiUrl}/visit?page=${page}`);
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : { message: "Network error" };
+  }
+};
+
+// get Filtered visits
+export const getFilteredVisits = async (filterType, filterValue) => {
+  try {
+    const response = await axios.get(
+      `${ApiUrl}/visit?filterType=${filterType}&filterValue=${filterValue}`
+    );
+    console.log("Response:", response);
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error.response ? error.response.data : { message: "Network error" };
+  }
+};

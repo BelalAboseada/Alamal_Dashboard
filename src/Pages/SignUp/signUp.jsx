@@ -61,9 +61,9 @@ const SignUp = () => {
           <div className="Wrapper grid grid-cols-1 md:grid-cols-12 gap-8 bg-white shadow-md p-6 rounded-lg overflow-hidden">
             <div className="col-span-1 md:col-span-6 flex items-center justify-center">
               <img
-                alt="alamal"
+                alt="Sign UP Image "
                 src={SignUpImg}
-                className="mx-auto w-full md:w-auto"
+                className="mx-auto w-full"
               />
             </div>
             <div className="col-span-1 md:col-span-6 mt-10 sm:mx-auto sm:w-full sm:max-w-sm rounded p-5">

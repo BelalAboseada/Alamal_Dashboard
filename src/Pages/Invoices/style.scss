@@ -1,22 +1,4 @@
-.Input_file::-webkit-file-upload-button {
-  visibility: hidden;
-  opacity: 0;
-  display: none;
-}
-.Filter {
-  color: var(--main-color);
-}
-.InvoiceItem {
-  background-color: var(--main-color);
-}
-.ActivePaginate {
-  background-color: var(--main-color) !important;
-  color: white !important;
-}
-.InvoiceImage {
-  color: white !important;
-  filter: brightness(0) invert(1);
-}
+
 
 // Modal
 

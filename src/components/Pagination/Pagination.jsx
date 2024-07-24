@@ -48,6 +48,7 @@ const Pagination = ({ page, totalPages, nextPage, prevPage, goToPage }) => {
     <IconButton
       className={pageNumber === page ? "ActivePaginate" : ""}
       key={pageNumber}
+      ripple={false}
       variant={pageNumber === page ? "filled" : "text"}
       onClick={() => goToPage(pageNumber)}
     >

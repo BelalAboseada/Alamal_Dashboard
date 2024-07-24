@@ -202,6 +202,7 @@ const AllInvoices = () => {
                 <Button
                   variant="text"
                   color="gray"
+                  ripple={false}
                   onClick={() => {
                     setFilterType("");
                     setFilterValue("");
@@ -213,6 +214,7 @@ const AllInvoices = () => {
                 <Button
                   variant="gradient"
                   color="blue"
+                  ripple={false}
                   onClick={handleFilterSubmit}
                 >
                   {t("submit")}
@@ -233,7 +235,7 @@ const AllInvoices = () => {
                   <Link
                     key={invoice._id}
                     to={`/invoice/${invoice._id}`}
-                    className="InvoiceItem shadow-md p-2 m-2 flex items-center gap-3 rounded-3xl"
+                    className="Item shadow-md p-2 m-2 flex items-center gap-3 rounded-3xl"
                   >
                     <div className="logo">
                       <span>
@@ -241,7 +243,7 @@ const AllInvoices = () => {
                           src={InvoiceImage}
                           width={100}
                           height={100}
-                          className="InvoiceImage"
+                          className="Image"
                           alt="Invoice Image"
                         />
                       </span>

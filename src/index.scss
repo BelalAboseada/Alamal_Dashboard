@@ -57,3 +57,22 @@ option {
 button span {
   padding-inline:8px !important;
 }
+.Input_file::-webkit-file-upload-button {
+  visibility: hidden;
+  opacity: 0;
+  display: none;
+}
+.Filter {
+  color: var(--main-color);
+}
+.Item {
+  background-color: var(--main-color);
+}
+.ActivePaginate {
+  background-color: var(--main-color) !important;
+  color: white !important;
+}
+.Image {
+  color: white !important;
+  filter: brightness(0) invert(1);
+}

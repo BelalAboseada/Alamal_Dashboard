@@ -16,6 +16,7 @@ import PaymentsByInvoice from "../Pages/Payments/PaymentsByInvoice";
 import AllProducts from "../Pages/Products/AllProducts";
 import Product from "../Pages/Products/Product";
 import CreateProduct from "../Pages/Products/CreateProduct";
+import MakeVisit from "../Pages/Visits/makeVisit";
 
 const AppRoutes = () => {
   const location = useLocation();
@@ -36,6 +37,7 @@ const AppRoutes = () => {
       <Route path="/MakePayment" element={<MakePayment />} />
       <Route path="/payment/invoice/:id" element={<PaymentsByInvoice />} />
       <Route path="/ArrangeVisits" element={<ArrangeVisits />} />
+      <Route path="/makeVisit" element={<MakeVisit />} />
       <Route path="/AllVisits" element={<AllVisits />} />
       <Route path="/AllTransactions" element={<AllTrans />} />
       <Route path="/MakeTransactions" element={<MakeTransaction />} />

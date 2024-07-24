@@ -203,6 +203,7 @@ const AllPayments = () => {
                 <Button
                   variant="text"
                   color="gray"
+                  ripple={false}
                   onClick={() => {
                     setFilterType("");
                     setFilterValue("");
@@ -213,6 +214,7 @@ const AllPayments = () => {
                 </Button>
                 <Button
                   variant="gradient"
+                  ripple={false}
                   color="blue"
                   onClick={handleFilterSubmit}
                 >
@@ -233,7 +235,7 @@ const AllPayments = () => {
                 {Payment.map((payment) => (
                   <Link
                     key={payment._id}
-                    className="InvoiceItem shadow-md p-2 m-2 flex items-center gap-3 rounded-3xl"
+                    className="Item shadow-md p-2 m-2 flex items-center gap-3 rounded-3xl"
                   >
                     <div className="logo">
                       <span>
@@ -241,7 +243,7 @@ const AllPayments = () => {
                           src={Image}
                           width={100}
                           height={100}
-                          className="InvoiceImage"
+                          className="Image"
                           alt="Invoice Image"
                         />
                       </span>
