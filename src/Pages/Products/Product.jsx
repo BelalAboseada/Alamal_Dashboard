@@ -87,12 +87,21 @@ const Product = () => {
                   <h5 className="font-bold  text-base">{product.name}</h5>
                 </div>
                 <div className="description mb-6">
-                  <p className="font-normal  text-base text-gray-700">  
+                  <p className="font-normal  text-base text-gray-700">
                     {product.desc}
                   </p>
                 </div>
+                <div className="date flex gap-1  py-1  ">
+                  <p className="font-bold text-base mx-1">
+                    <strong>{t("date")}:</strong>
+                  </p>
+                  <p className="font-normal  text-base text-gray-700">
+                    {new Date(product.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+                <div className="description mb-6"></div>
 
-                <div className="mt-9">
+                <div className="">
                   <p className="font-medium  text-2xl text-black  ">
                     {product.unitPrice}$
                   </p>

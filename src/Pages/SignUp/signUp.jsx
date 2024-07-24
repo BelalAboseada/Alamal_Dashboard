@@ -53,17 +53,21 @@ const SignUp = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="container p-4 flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="container p-4 flex items-center justify-center w-full">
         {loading ? (
           <Loader />
         ) : (
-          <div className="Wrapper grid grid-cols-12 gap-14 bg-white shadow-md p-6 rounded-lg overflow-hidden">
-            <div className="col-span-12 md:col-span-6 flex items-center justify-center">
-              <img alt="alamal" src={SignUpImg} className="mx-auto md:w-full" />
+          <div className="Wrapper grid grid-cols-1 md:grid-cols-12 gap-8 bg-white shadow-md p-6 rounded-lg overflow-hidden">
+            <div className="col-span-1 md:col-span-6 flex items-center justify-center">
+              <img
+                alt="alamal"
+                src={SignUpImg}
+                className="mx-auto w-full md:w-auto"
+              />
             </div>
-            <div className="col-span-12 md:col-span-6 mt-10 sm:mx-auto sm:w-full sm:max-w-sm rounded p-5">
-              <h2 className="mx-10 text-center text-2xl font-bold leading-9 tracking-tight">
+            <div className="col-span-1 md:col-span-6 mt-10 sm:mx-auto sm:w-full sm:max-w-sm rounded p-5">
+              <h2 className="text-center text-2xl font-bold leading-9 tracking-tight">
                 {t("signUp")}
               </h2>
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -127,7 +131,7 @@ const SignUp = () => {
                     />
                   </div>
                 </div>
-                <div className="Selectors flex flex-col  gap-3 justify-between ">
+                <div className="Selectors flex flex-col gap-3 justify-between">
                   <div className="my-2 flex flex-col w-full">
                     <label
                       htmlFor="role"
@@ -138,7 +142,7 @@ const SignUp = () => {
                     <Select
                       variant="standard"
                       placeholder="Select a Role"
-                      className="select w-full rounded-md border-0 p-2 shadow-md  sm:text-sm sm:leading-6"
+                      className="select w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
                       required
                       value={selectedRole}
                       onChange={(e) => setSelectedRole(e)}
@@ -148,8 +152,7 @@ const SignUp = () => {
                       <Option value="driver">Driver</Option>
                     </Select>
                   </div>
-
-                  <div className="my-2  flex flex-col w-full ">
+                  <div className="my-2 flex flex-col w-full">
                     <label
                       htmlFor="company"
                       className="block text-sm font-medium leading-6 mb-2"
@@ -159,7 +162,7 @@ const SignUp = () => {
                     <Select
                       variant="standard"
                       placeholder="Select a Company"
-                      className="select w-full rounded-md border-0 p-2 shadow-md  sm:text-sm sm:leading-6"
+                      className="select w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
                       required
                       value={selectedCompany}
                       onChange={(e) => setSelectedCompany(e)}

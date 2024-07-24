@@ -63,11 +63,28 @@ const PaymentsByInvoice = () => {
       setPayments(data.results);
       updateTotalPages(data.count, data.results.length);
       console.log("Filtered payments:", data.results);
-      // console.log("Total Pages:", totalPages);
+      console.log("Total Pages:", totalPages);
     } catch (error) {
       console.error("Error fetching filtered data:", error);
     }
   };
+   const handleKeyUp = (e) => {
+     if (e.key === "Enter") {
+       handleFilterSubmit();
+     }
+   };
+   useEffect(() => {
+     const handleKeyDown = (e) => {
+       if (e.ctrlKey && e.key === "q") {
+         setOpen((prev) => !prev);
+       }
+     };
+
+     window.addEventListener("keydown", handleKeyDown);
+     return () => {
+       window.removeEventListener("keydown", handleKeyDown);
+     };
+   }, []);
 
   return (
     <div className="PaymentForInvoice">
@@ -77,7 +94,7 @@ const PaymentsByInvoice = () => {
             <Breadcrumbs>
               <Link
                 to={"/"}
-                className="opacity-60 text-black text-base font-bold"
+                className="opacity-60 text-black text-xs font-bold"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -90,19 +107,19 @@ const PaymentsByInvoice = () => {
               </Link>
               <Link
                 to="/AllInvoices"
-                className="text-xs font-medium lg:text-base lg:font-extrabold"
+                className="text-xs font-normal lg:text-base lg:font-extrabold"
               >
                 <span>{t("invoices")}</span>
               </Link>
               <Link
                 to={`/invoice/${id}`}
-                className="text-xs font-medium lg:text-base lg:font-extrabold"
+                className="text-xs font-normal lg:text-base lg:font-extrabold"
               >
                 <span>{t("invoice")}</span>
               </Link>
               <Link
                 to={`/payment/invoice/${id}`}
-                className="text-xs font-medium lg:text-base lg:font-extrabold"
+                className="text-xs font-normal lg:text-base lg:font-extrabold"
               >
                 <span>{t("paymentForInvoice")}</span>
               </Link>
@@ -112,10 +129,10 @@ const PaymentsByInvoice = () => {
             <h6>
               <button
                 onClick={handleOpen}
-                className="right-0 font-medium text-base flex gap-1 items-center cursor-pointer"
+                className="right-0 font-medium text-sm flex  items-center cursor-pointer"
               >
                 <span>
-                  <AdjustmentsHorizontalIcon />
+                  <AdjustmentsHorizontalIcon  />
                 </span>
                 {t("filter")}
               </button>
@@ -174,6 +191,7 @@ const PaymentsByInvoice = () => {
                     variant="standard"
                     className="Input w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
                     placeholder={t("search")}
+                    onKeyUp={handleKeyUp}
                     onChange={handleSearchChange}
                   />
                 </div>
@@ -209,7 +227,7 @@ const PaymentsByInvoice = () => {
           <>
             {payments.map((payment) => (
               <Link
-                key={payment._id}  
+                key={payment._id}
                 className="InvoiceItem shadow-md p-2 m-2 flex items-center gap-3 rounded-3xl"
               >
                 <div className="logo">
