@@ -20,6 +20,7 @@ import {
   BanknotesIcon,
   EyeIcon,
   ShoppingCartIcon,
+  CurrencyDollarIcon,
 } from "@heroicons/react/24/solid";
 import {
   ChevronRightIcon,
@@ -331,6 +332,52 @@ export function SidebarWithBurgerMenu() {
                       <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
                     </ListItemPrefix>
                     <Link to={"/makeVisit"}>{t("makeVisit")}</Link>
+                  </ListItem>
+                </List>
+              </AccordionBody>
+            </Accordion>
+            <Accordion
+              open={open === 5}
+              icon={
+                <ChevronDownIcon
+                  strokeWidth={2.5}
+                  className={`mx-auto h-4 w-4 transition-transform ${
+                    open === 3 ? "rotate-180" : ""
+                  }`}
+                />
+              }
+            >
+              <ListItem className="p-0" ripple={false} selected={open === 5}>
+                <AccordionHeader
+                  onClick={() => handleOpen(5)}
+                  className="border-b-0 p-3"
+                >
+                  <ListItemPrefix>
+                    <CurrencyDollarIcon className="h-5 w-5" />
+                  </ListItemPrefix>
+                  <Typography
+                    color="blue-gray"
+                    className={`mr-auto font-normal ${
+                      isRTL ? "ml-auto mr-0 px-2" : ""
+                    }`}
+                  >
+                    {t("Transactions")}
+                  </Typography>
+                </AccordionHeader>
+              </ListItem>
+              <AccordionBody className="py-1">
+                <List className="p-0">
+                  <ListItem ripple={false}>
+                    <ListItemPrefix>
+                      <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                    </ListItemPrefix>
+                    <Link to={"/MakeTransactions"}>{t("createTrans")}</Link>
+                  </ListItem>
+                  <ListItem ripple={false}>
+                    <ListItemPrefix>
+                      <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                    </ListItemPrefix>
+                    <Link to={"/AllTransactions"}>{t("viewTransactions")}</Link>
                   </ListItem>
                 </List>
               </AccordionBody>

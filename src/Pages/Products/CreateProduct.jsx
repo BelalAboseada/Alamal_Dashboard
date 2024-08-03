@@ -4,7 +4,7 @@ import { Input } from "@material-tailwind/react";
 import { useState } from "react";
 import Button from "../../components/UI/Button";
 import { toast } from "react-toastify";
-import { addProduct } from "../../services/api";
+import { addProduct, uploadProductImage } from "../../services/api";
 
 const CreateProduct = () => {
   const [name, setName] = useState("");
@@ -33,21 +33,26 @@ const CreateProduct = () => {
     const user = localStorage.getItem("user");
     const companyId = JSON.parse(user).company;
     try {
+      const imageUrl = await uploadProductImage(image);
+      console.log(imageUrl);
+
       const productData = {
         name,
         desc,
         unitPrice: price,
-        pic: image.name,
+        pic: imageUrl,
         company: companyId,
       };
-      const response = await addProduct(productData);
+      const response = await addProduct(productData, image);
+      console.log("res => ", response);
       if (response) {
         toast.success("Product created successfully", options);
+        console.log("Product created successfully", response);
         clearFormFields();
       }
     } catch (error) {
       console.error("Error creating product:", error);
-      toast.error("Error creating product", options);
+      toast.error(error, options);
     }
   };
 

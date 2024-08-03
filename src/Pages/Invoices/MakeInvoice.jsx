@@ -93,20 +93,26 @@ const handleSubmit = async (e) => {
     return;
   }
 
+    
   const user = localStorage.getItem("user");
   const userId = JSON.parse(user)._id;
   const companyId = JSON.parse(user).company;
 
   try {
     const imageUrl = await uploadInvoiceImage(image); 
+    console.log(imageUrl);
+
 
     const invoiceData = {
       pharmacy: selectedPharmacy,
-      medicalRep: selectedRep,
+      rep: selectedRep,
       driver: selectedDriver,
       createdBy: userId,
       dropStatus: note,
       dropComment: comment,
+      invoiceType,
+      invoiceStatus,
+      orderStatus,
       amount,
       company: companyId,
       date: date ? format(date, "yyyy-MM-dd") : null,
@@ -327,8 +333,8 @@ const handleSubmit = async (e) => {
                 required
               >
                 <Option value="preparing">Preparing</Option>
-                <Option value="delivered">delivered</Option>
                 <Option value="delivering">delivering</Option>
+                <Option value="delivered">delivered</Option>
               </Select>
             </div>
           </div>

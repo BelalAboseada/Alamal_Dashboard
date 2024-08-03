@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "react-toastify";
 
 // Api url
 const ApiUrl = "http://194.164.72.211:8008";
@@ -36,7 +37,77 @@ export const signUp = async (
   }
 };
 
+// Update Profile
+export const uploadAvatar = async (profilePic) => {
+  try {
+    const formData = new FormData();
+    formData.append("profilePic", profilePic);
+
+    const response = await axios.post(`${ApiUrl}/users/photo`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    console.log("Upload Response:", response);
+
+    const image = response.data.profilePic;
+    if (!image) {
+      throw new Error("Image URL not found in response");
+    }
+    console.log("image => ", image);
+    return image;
+  } catch (error) {
+    console.log(" err uploading avatar =>  ", error.message);
+  }
+};
+
+export const updateProfile = async (userId, updatedData) => {
+  try {
+    let image = "";
+
+    if (updatedData.profilePic) {
+      image = await uploadAvatar(updatedData.profilePic);
+      console.log("Image URL in updateProfile:", image);
+    }
+
+    // Add image URL to updatedData
+    const fullUpdatedData = {
+      ...updatedData,
+      profilePic: image || updatedData.profilePic,
+    };
+
+    const response = await axios.put(
+      `${ApiUrl}/users/${userId}`,
+      fullUpdatedData
+    );
+    return response.data;
+  } catch (error) {
+    console.log("err while updating profile =>  ", error.message);
+  }
+};
+// Delete account 
+
+export const deleteAccount = async (userId) => {
+  try {
+    const response = await axios.delete(`${ApiUrl}/users/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.log("err while deleting account =>  ", error.message);
+  }
+};
+
 // get All Users
+
+export const getAllUsers = async (page) => {
+  try {
+    const response = await axios.get(`${ApiUrl}/users?page=${page}`);
+    return response.data.results;
+  } catch (error) {
+    throw error.response? error.response.data : { message: "Network error" };
+  }
+};
+// u
 export const getDrivers = async () => {
   try {
     const response = await axios.get(`${ApiUrl}/users`);
@@ -75,11 +146,11 @@ export const uploadInvoiceImage = async (invoiceImage) => {
 
     console.log("Upload Response:", response);
 
-    const image = response.data.image[0];
+    const image = response.data.image;
     if (!image) {
       throw new Error("Image URL not found in response");
     }
-
+    console.log("image => ", image);
     return image;
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };
@@ -108,9 +179,22 @@ export const makeInvoice = async (invoiceData, Image) => {
 };
 
 // get All Invoices
+export const getAllInvoicesUsers = async (page, userId) => {
+  try {
+    const response = await axios.get(
+      `${ApiUrl}/invoice/user/${userId}?page=${page}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : { message: "Network error" };
+  }
+};
+// get All Invoices
 export const getAllInvoices = async (page) => {
   try {
-    const response = await axios.get(`${ApiUrl}/invoice?page=${page}`);
+    const response = await axios.get(
+      `${ApiUrl}/invoice/?page=${page}`
+    );
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };
@@ -139,6 +223,16 @@ export const getFilteredInvoices = async (filterType, filterValue) => {
     throw error.response ? error.response.data : { message: "Network error" };
   }
 };
+// update invoice
+
+export const updateInvoice = async (invoiceId, updatedInvoiceData) => {
+  try {
+    const response = await axios.put(`${ApiUrl}/invoice/${invoiceId}`, updatedInvoiceData);
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : { message: "Network error" };
+  }
+};
 
 // Make Payment
 export const CreatePayment = async (paymentData) => {
@@ -151,6 +245,16 @@ export const CreatePayment = async (paymentData) => {
     return response.data;
   } catch (err) {
     throw err.response ? err.response.data : { message: "Network error" };
+  }
+};
+// update Payment
+
+export const updatePayment = async (paymentId, updates) => {
+  try {
+    const response = await axios.put(`${ApiUrl}/payment/${paymentId}`, updates);
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : { message: "Network error" };
   }
 };
 
@@ -232,9 +336,45 @@ export const getFilteredProducts = async (filterType, filterValue) => {
 };
 
 // Add product
+export const uploadProductImage = async (Image) => {
+  try {
+    const formData = new FormData();
+    formData.append("pic", Image);
+
+    const response = await axios.post(`${ApiUrl}/product/photo`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    console.log("Upload Response:", response);
+
+    const image = response.data.pic;
+    if (!image) {
+      throw new Error("Image URL not found in response");
+    }
+    console.log("image => ", image);
+    return image;
+  } catch (error) {
+    toast.error(error.message);
+    console.log(error.message);
+  }
+};
+
 export const addProduct = async (productData) => {
   try {
-    const response = await axios.post(`${ApiUrl}/product`, productData, {
+    let image = "";
+
+    if (Image) {
+      image = await uploadProductImage(Image);
+      console.log("Image URL in makeProduct:", image);
+    }
+    const fullInvoiceData = {
+      ...productData,
+      image,
+    };
+
+    const response = await axios.post(`${ApiUrl}/product`, fullInvoiceData, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -244,6 +384,17 @@ export const addProduct = async (productData) => {
     throw err.response ? err.response.data : { message: "Network error" };
   }
 };
+
+// update Product
+
+// export const updateProduct = async (productId, updatedProductData) => {
+//   try {
+
+  
+//   } catch (err) {
+//     throw err.response ? err.response.data : { message: "Network error" };
+//   }
+// };
 
 // get Product
 
@@ -278,5 +429,74 @@ export const getFilteredVisits = async (filterType, filterValue) => {
   } catch (error) {
     console.error("Error:", error);
     throw error.response ? error.response.data : { message: "Network error" };
+  }
+};
+
+// makeVisit
+
+export const makeVisit = async (visitData) => {
+  try {
+    const response = await axios.post(`${ApiUrl}/visit`, visitData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (err) {
+    throw err.response ? err.response.data : { message: "Network error" };
+  }
+};
+
+//getAllTrans
+
+export const getAllTransactions = async (page) => {
+  try {
+    const response = await axios.get(`${ApiUrl}/trans?page=${page}`);
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : { message: "Network error" };
+  }
+};
+
+// getFiltered trans
+
+export const getFilteredTransactions = async (filterType, filterValue) => {
+  try {
+    const response = await axios.get(
+      `${ApiUrl}/trans?filterType=${filterType}&filterValue=${filterValue}`
+    );
+    console.log("Response:", response);
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error.response ? error.response.data : { message: "Network error" };
+  }
+};
+
+// makeTrans
+
+export const makeTrans = async (transactionData) => {
+  try {
+    const response = await axios.post(`${ApiUrl}/trans`, transactionData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (err) {
+    throw err.response ? err.response.data : { message: "Network error" };
+  }
+};
+// update trans
+
+export const updateTransaction = async (transactionId, updates) => {
+  try {
+    const response = await axios.put(
+      `${ApiUrl}/trans/${transactionId}`,
+      updates
+    );
+    return response.data;
+  } catch (err) {
+    throw err.response ? err.response.data : { message: "Network error" };
   }
 };

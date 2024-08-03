@@ -1,7 +1,7 @@
 import { t } from "i18next";
 import ContentWrapper from "../../components/ContentWrapper/contentWrapper";
 import { useEffect, useState } from "react";
-import { getAllInvoices, getFilteredInvoices } from "../../services/api";
+import { getAllInvoicesUsers, getFilteredInvoices } from "../../services/api";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/solid";
 import {
   Dialog,
@@ -15,15 +15,16 @@ import {
   Option,
   Breadcrumbs,
   Tooltip,
+  Chip,
 } from "@material-tailwind/react";
-import "./style.scss";
 import Loader from "../../components/Loader/Loader";
 import { Link } from "react-router-dom";
-import InvoiceImage from "../../assets/item.png";
 import usePagination from "../../hooks/UsePagination";
 import Pagination from "../../components/Pagination/Pagination";
 
 const AllInvoices = () => {
+  const User = JSON.parse(localStorage.getItem("user"));
+  const userId = User._id;
   const [invoices, setInvoices] = useState([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -38,7 +39,7 @@ const AllInvoices = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const data = await getAllInvoices(page);
+        const data = await getAllInvoicesUsers(page, userId);
         setInvoices(data.results);
         updateTotalPages(data.count);
         console.log("Fetched invoices:", data.results);
@@ -60,6 +61,7 @@ const AllInvoices = () => {
   const handleSearchChange = (e) => {
     setFilterValue(e.target.value);
   };
+
   const handleFilterSubmit = async () => {
     setOpen(false);
     try {
@@ -72,11 +74,20 @@ const AllInvoices = () => {
       console.error("Error fetching filtered data:", error);
     }
   };
+
   const handleKeyUp = (e) => {
     if (e.key === "Enter") {
       handleFilterSubmit();
     }
   };
+
+  const TABLE_HEAD = [
+    { label: t("amount"), key: "amount" },
+    { label: t("invoiceStatus"), key: "invoiceStatus" },
+    { label: t("orderStatus"), key: "orderStatus" },
+    { label: t("InvoiceType"), key: "invoiceType" },
+    { label: t("comment"), key: "dropComment" },
+  ];
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.ctrlKey && e.key === "q") {
@@ -89,6 +100,7 @@ const AllInvoices = () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
+
   return (
     <div className="AllInvoices">
       <h1 className="Title">{t("invoices")}</h1>
@@ -178,7 +190,7 @@ const AllInvoices = () => {
                   >
                     <Option value="pharmacy">{t("pharmacy")}</Option>
                     <Option value="company">{t("companyName")}</Option>
-                    <Option value="medicalRep">{t("medicalRep")}</Option>
+                    <Option value="rep">{t("medicalRep")}</Option>
                     <Option value="createdBy">{t("createdBy")}</Option>
                     <Option value="date">{t("date")}</Option>
                   </Select>
@@ -224,73 +236,95 @@ const AllInvoices = () => {
           </div>
         </div>
         {loading ? (
-          <div className="flex items-center justify-center mt-5">
+          <div className="LoaderWrapper h-full w-full flex justify-center items-center">
             <Loader />
           </div>
-        ) : (
-          <div className="content">
-            {invoices.length > 0 ? (
-              <>
-                {invoices.map((invoice) => (
-                  <Link
-                    key={invoice._id}
-                    to={`/invoice/${invoice._id}`}
-                    className="Item shadow-md p-2 m-2 flex items-center gap-3 rounded-3xl"
+        ) : invoices.length > 0 ? (
+          <div className="overflow-x-auto  mt-5">
+            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+              <thead>
+                <tr className="bg-gray-100 border-b border-gray-200 text-xs md:text-sm lg:text-base">
+                  {TABLE_HEAD.map((item, index) => (
+                    <th key={index} className="p-2 md:p-4 text-left">
+                      {item.label}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {invoices.map((invoice, index) => (
+                  <tr
+                    key={index}
+                    className="bo border-b border-gray-200 hover:bg-gray-50 text-xs md:text-sm lg:text-base"
                   >
-                    <div className="logo">
-                      <span>
-                        <img
-                          src={InvoiceImage}
-                          width={100}
-                          height={100}
-                          className="Image"
-                          alt="Invoice Image"
-                        />
-                      </span>
-                    </div>
-                    <div>
-                      <p className="text-white">
-                        <span className="font-bold text-base">
-                          {t("amount")}:
-                        </span>{" "}
-                        {invoice.amount}
-                      </p>
-                      <p className="text-white">
-                        <span className="font-bold text-base">
-                          {t("orderStatus")}:
-                        </span>{" "}
-                        {invoice.orderStatus}
-                      </p>
-                      <p className="text-white">
-                        <span className="font-bold text-base">
-                          {t("type")}:
-                        </span>
-                        {invoice.invoiceType}
-                      </p>
-                      <p className="text-white">
-                        <span className="font-bold text-base">
-                          {t("status")}:
-                        </span>
-                        {invoice.invoiceStatus}
-                      </p>
-                    </div>
-                  </Link>
+                    {TABLE_HEAD.map((item, headIndex) => (
+                      <td key={headIndex} className="p-2 md:p-4 text-left">
+                        <Link to={`/Invoice/${invoice._id}`}>
+                          {item.key === "orderStatus" ? (
+                            <Chip
+                              size="sm"
+                              className="w-fit mx-auto ml-5"
+                              variant="ghost"
+                              value={invoice[item.key] || "N/A"}
+                              color={
+                                invoice[item.key] === "preparing"
+                                  ? "gray"
+                                  : invoice[item.key] === "delivering"
+                                  ? "blue"
+                                  : invoice[item.key] === "delivered"
+                                  ? "green"
+                                  : "gray"
+                              }
+                            />
+                          ) : item.key === "invoiceType" ? (
+                            <Chip
+                              size="sm"
+                              className="w-fit mx-auto ml-5"
+                              variant="ghost"
+                              value={invoice[item.key] || "N/A"}
+                              color={
+                                invoice[item.key] === "normal"
+                                  ? "green"
+                                  : invoice[item.key] === "return"
+                                  ? "red"
+                                  : "gray"
+                              }
+                            />
+                          ) : (
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-bold"
+                            >
+                              {item.key === "dropComment"
+                                ? (invoice[item.key]?.length > 30
+                                    ? `${invoice[item.key].slice(0, 30)}...`
+                                    : invoice[item.key]) || "N/A"
+                                : invoice[item.key] || "N/A"}
+                            </Typography>
+                          )}
+                        </Link>
+                      </td>
+                    ))}
+                  </tr>
                 ))}
-                <div className="flex items-center justify-center gap-4">
-                  <Pagination
-                    page={page}
-                    totalPages={totalPages}
-                    nextPage={nextPage}
-                    prevPage={prevPage}
-                    goToPage={goToPage}
-                  />
-                </div>
-              </>
-            ) : (
-              <div className="text-center flex  justify-center items-center">
-                <p className="text-gray-500">{t("thersIsNoData")}</p>
-              </div>
-            )}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="NoData p-4 bg-white shadow-md rounded-md">
+            <p className="text-center text-gray-500">{t("thersIsNoData")}</p>
+          </div>
+        )}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-4 mt-5">
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              nextPage={nextPage}
+              prevPage={prevPage}
+              goToPage={goToPage}
+            />
           </div>
         )}
       </ContentWrapper>

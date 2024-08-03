@@ -24,7 +24,7 @@ const MakePayment = () => {
   const [reps, setReps] = useState([]);
   const [selectedPharmacy, setSelectedPharmacy] = useState("");
   const [selectedRep, setSelectedRep] = useState("");
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState(false);
   const [amount, setAmount] = useState("");
   const [pharmaciesLoading, setPharmaciesLoading] = useState(true);
   const [repsLoading, setRepsLoading] = useState(true);
@@ -72,7 +72,7 @@ const MakePayment = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!amount || !selectedPharmacy || !date || !status || !selectedRep) {
+    if (!amount || !selectedPharmacy || !date  || !selectedRep) {
       toast.error("Please fill out all required fields.", options);
       return;
     }
@@ -108,7 +108,7 @@ const MakePayment = () => {
     setSelectedPharmacy("");
     setSelectedRep("");
     setAmount("");
-    setStatus("");
+    setStatus(false);
     setDate(null);
   };
 
@@ -183,25 +183,7 @@ const MakePayment = () => {
           </div>
 
           <div className="mt-5 space-y-5 md:space-y-0 md:space-x-5 md:flex md:items-center md:justify-between">
-            <div className="my-2 mx-3 flex flex-col w-full ">
-              <label
-                htmlFor="status"
-                className="block text-sm font-medium leading-6 mb-2"
-              >
-                {t("status")}
-              </label>
-              <Select
-                variant="standard"
-                placeholder="status"
-                className="select w-full rounded-md border-0 py-2 shadow-md sm:text-sm sm:leading-6"
-                value={status}
-                onChange={(e) => setStatus(e)}
-                required
-              >
-                <Option value="true">True</Option>
-                <Option value="false">False</Option>
-              </Select>
-            </div>
+         
           </div>
 
           <div className="mt-5 space-y-5 md:space-y-0 md:space-x-5 md:flex md:items-center md:justify-between">

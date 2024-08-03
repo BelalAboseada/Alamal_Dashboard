@@ -68,6 +68,7 @@
   "no": "لا",
   "viewTrans": "عرض التحويلة",
   "viewTransactions": "عرض المعاملات",
+  "Transactions": "المعاملات",
   "transactionId": "رقم المعاملة",
   "balanceHistory": "تاريخ الرصيد",
   "uploadImage": "رفع الصورة",
@@ -86,6 +87,7 @@
   "selectCompany": "اختر الشركة",
   "selectOrderStatus": "اختر حالة الطلب",
   "selectInvoiceType": "اختر نوع الفاتورة",
+  "InvoiceType": "نوع الفاتوره",
   "selectInvoiceStatus": "اختر حالة الفاتورة",
   "selectMedicalRep": "اختر المندوب الطبي",
   "selectPharmacy": "اختر الصيدلية",
@@ -137,5 +139,12 @@
   "YouDontHaveAccount": "ليس لديك حساب، يجب أن تنشئ حسابًا أولاً!",
   "details": "التفاصيل",
   "paymentForInvoice": " المدفوعات الخاصه بالفاتورة ",
-  "noPaymentsFound": "لا توجد مدفوعات خاصه بهذه الفاتورة"
+  "noPaymentsFound": "لا توجد مدفوعات خاصه بهذه الفاتورة",
+  "sender": "اسم المرسل",
+  "UpdateProfile": "تحديث الملف الشخصي ",
+  "delete" : "حذف الحساب",
+  "delContent" : "حذف حسابك هو إجراء دائم ولا يمكن التراجع عنه. سيتم محو جميع بياناتك، بما في ذلك معلومات ملفك الشخصي والإعدادات وأي عناصر محفوظة بشكل دائم. يرجى التأكد قبل المتابعة.",
+  "delHead" : "يجب ان تقرا ذلك",
+  "delHeader" : "مطلوب انتباهك"
+
 }

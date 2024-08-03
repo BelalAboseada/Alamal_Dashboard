@@ -89,7 +89,6 @@ const AllVisits = () => {
   }, []);
   const TABLE_HEAD = [
     { label: t("type"), key: "type" },
-    { label: t("status"), key: "status" },
     { label: t("hasPayment"), key: "hasPayment" },
     { label: t("location"), key: "location" },
     { label: t("comment"), key: "comment" },
@@ -184,9 +183,11 @@ const AllVisits = () => {
                   >
                     <Option value="pharmacy">{t("pharmacy")}</Option>
                     <Option value="company">{t("companyName")}</Option>
-                    <Option value="medicalRep">{t("medicalRep")}</Option>
-                    <Option value="createdBy">{t("createdBy")}</Option>
-                    <Option value="date">{t("date")}</Option>
+                    <Option value="rep">{t("medicalRep")}</Option>
+                    <Option value="driver">{t("driver")}</Option>
+                    <Option value="location">{t("location")}</Option>
+                    <Option value="status">{t("status")}</Option>
+                    <Option value="hasPayment">{t("hasPayment")}</Option>
                   </Select>
                   <label
                     htmlFor="search"
@@ -235,7 +236,7 @@ const AllVisits = () => {
           </div>
         ) : Visits.length === 0 ? (
           <div className="flex items-center justify-center mt-5">
-            <Typography>{t("noData")}</Typography>
+            <Typography>{t("thersIsNoData")}</Typography>
           </div>
         ) : (
           <div className="overflow-x-auto mt-5">
@@ -257,7 +258,7 @@ const AllVisits = () => {
                   >
                     {TABLE_HEAD.map((item, headIndex) => (
                       <td key={headIndex} className="p-2 md:p-4 text-left">
-                        <Link to={"/ArrangeVisits"}>
+                        <Link>
                           {item.key === "hasPayment" ? (
                             <Chip
                               size="sm"

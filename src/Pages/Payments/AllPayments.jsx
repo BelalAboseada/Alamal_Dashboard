@@ -12,22 +12,30 @@ import {
   Input,
   Button,
   Tooltip,
+  Chip,
 } from "@material-tailwind/react";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import usePagination from "../../hooks/UsePagination";
-import { getAllPayments, getFilteredPayments } from "../../services/api";
-import Image from "../../assets/dollar.png";
+import {
+  getAllPayments,
+  getFilteredPayments,
+  updatePayment,
+} from "../../services/api";
 import Pagination from "../../components/Pagination/Pagination";
 import Loader from "../../components/Loader/Loader";
+import { CheckCircleIcon, CheckIcon } from "@heroicons/react/24/outline";
+import ContentLoader from "../../components/Loader/ContentLoader";
 
 const AllPayments = () => {
   const [open, setOpen] = useState(false);
-  const [Payment, setPayment] = useState([]);
+  const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filterType, setFilterType] = useState("");
   const [filterValue, setFilterValue] = useState("");
+  const [loadingId, setLoadingId] = useState(null);
+
   const { page, nextPage, prevPage, goToPage, totalPages, updateTotalPages } =
     usePagination(1);
 
@@ -38,9 +46,9 @@ const AllPayments = () => {
       setLoading(true);
       try {
         const data = await getAllPayments(page);
-        setPayment(data.results);
+        setPayments(data.results);
         updateTotalPages(data.count);
-        console.log("Fetched invoices:", data.results);
+        console.log("Fetched Payments:", data.results);
         console.log("Total Pages:", totalPages);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -64,19 +72,21 @@ const AllPayments = () => {
     setOpen(false);
     try {
       const data = await getFilteredPayments(filterType, filterValue);
-      setPayment(data.results);
-      updateTotalPages(data.count, data.results.length);
-      console.log("Filtered Payments :", data.results);
+      setPayments(data.results);
+      updateTotalPages(data.count);
+      console.log("Filtered Payments:", data.results);
       console.log("Total Pages:", totalPages);
     } catch (error) {
       console.error("Error fetching filtered data:", error);
     }
   };
+
   const handleKeyUp = (e) => {
     if (e.key === "Enter") {
       handleFilterSubmit();
     }
   };
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.ctrlKey && e.key === "q") {
@@ -90,8 +100,48 @@ const AllPayments = () => {
     };
   }, []);
 
+ const handleConfirm = async (paymentId) => {
+   setLoadingId(paymentId);
+   try {
+     const result = await updatePayment(paymentId, {
+       status: true,
+     });
+     console.log("Update result:", result);
+
+     // Fetch updated payments
+     const data = await getAllPayments(page);
+     setPayments(data.results);
+     updateTotalPages(data.count);
+
+     // Retrieve user data from local storage
+     const user = JSON.parse(localStorage.getItem("user"));
+     if (user) {
+       // Find the confirmed payment and add its amount to the user's balance
+       const confirmedPayment = data.results.find(
+         (payment) => payment._id === paymentId
+       );
+       if (confirmedPayment) {
+         user.balance += confirmedPayment.amount;
+         // Update local storage with the new balance
+         localStorage.setItem("user", JSON.stringify(user));
+       }
+     }
+   } catch (error) {
+     console.error("Error updating payment:", error);
+   } finally {
+     setLoadingId(null);
+   }
+ };
+  const TABLE_HEAD = [
+    { label: t("amount"), key: "amount" },
+    { label: t("status"), key: "status" },
+    { label: t("createdBy"), key: "createdBy" },
+    { label: t("date"), key: "paymentDate" },
+    { label: t("actions"), key: "actions" },
+  ];
+
   return (
-    <div className="AllInvoices">
+    <div className="AllPayments">
       <h1 className="Title">{t("payment")}</h1>
       <ContentWrapper>
         <div className="Header shadow-md rounded-md p-2 flex justify-between items-center text-right">
@@ -99,7 +149,7 @@ const AllPayments = () => {
             <Breadcrumbs>
               <Link
                 to={"/"}
-                className="opacity-60 text-black text-sm font-medium  lg:text-base lg:font-extrabold "
+                className="opacity-60 text-black text-sm font-medium lg:text-base lg:font-extrabold"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -112,7 +162,7 @@ const AllPayments = () => {
               </Link>
               <Link
                 to={"/AllPayments"}
-                className=" text-sm font-medium  lg:text-base lg:font-extrabold "
+                className="text-sm font-medium lg:text-base lg:font-extrabold"
               >
                 <span>{t("payment")}</span>
               </Link>
@@ -120,7 +170,7 @@ const AllPayments = () => {
           </div>
           <div className="Filter">
             <Tooltip
-              className="bg-gray-100 text-blue-400 "
+              className="bg-gray-100 text-blue-400"
               content="ctrl + Q for Quick open"
               placement="top"
               animate={{
@@ -230,67 +280,104 @@ const AllPayments = () => {
           </div>
         ) : (
           <div className="content">
-            {Payment.length > 0 ? (
-              <>
-                {Payment.map((payment) => (
-                  <Link
-                    key={payment._id}
-                    className="Item shadow-md p-2 m-2 flex items-center gap-3 rounded-3xl"
-                  >
-                    <div className="logo">
-                      <span>
-                        <img
-                          src={Image}
-                          width={100}
-                          height={100}
-                          className="Image"
-                          alt="Invoice Image"
-                        />
-                      </span>
-                    </div>
-                    <div>
-                      <p className="text-white">
-                        <span className="font-bold text-base mx-2">
-                          {t("id")}:
-                        </span>
-                        {payment._id}
-                      </p>
-                      <p className="text-white">
-                        <span className="font-bold text-base mx-2">
-                          {t("amount")}:
-                        </span>
-                        {payment.amount}
-                      </p>
-                      <p className="text-white">
-                        <span className="font-bold text-base mx-2">
-                          {t("pharmacy")}:
-                        </span>
-                        {payment.pharmacy.name}
-                      </p>
-                      <p className="text-white">
-                        <span className="font-bold text-base mx-2">
-                          {t("date")}:
-                        </span>
-                        {new Date(payment.date).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </Link>
-                ))}
-                <div className="pagination-wrapper py-2 flex justify-center items-center mt-10">
-                  <Pagination
-                    page={page}
-                    totalPages={totalPages}
-                    nextPage={nextPage}
-                    prevPage={prevPage}
-                    goToPage={goToPage}
-                  />
-                </div>
-              </>
+            {payments.length > 0 ? (
+              <div className="overflow-x-auto mt-5">
+                <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+                  <thead>
+                    <tr className="bg-gray-100 border-b border-gray-200 text-xs md:text-sm lg:text-base">
+                      {TABLE_HEAD.map((item, index) => (
+                        <th key={index} className="p-2 md:p-4 text-left">
+                          {item.label}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {payments.map((payment, index) => (
+                      <tr
+                        key={index}
+                        className="border-b border-gray-200 hover:bg-gray-50 text-xs md:text-sm lg:text-base"
+                      >
+                        {TABLE_HEAD.map((item, headIndex) => (
+                          <td key={headIndex} className="p-2 md:p-4 text-left">
+                            {item.key === "actions" ? (
+                              loadingId === payment._id ? (
+                                <Button
+                                  className="cursor-pointer bg-gray-500 p-2 rounded-lg"
+                                  disabled
+                                >
+                                  <ContentLoader className="loader" />
+                                </Button>
+                              ) : (
+                                <button
+                                  className={`cursor-pointer p-2 rounded-lg ${
+                                    payment.status === "true"
+                                      ? "bg-gray-400"
+                                      : "bg-green-500"
+                                  }`}
+                                  onClick={() => handleConfirm(payment._id)}
+                                  disabled={payment.confirmed === "true"}
+                                >
+                                  {payment.status === "true" ? (
+                                    <CheckCircleIcon className="text-white" />
+                                  ) : (
+                                    <CheckIcon className="text-white" />
+                                  )}
+                                </button>
+                              )
+                            ) : item.key === "status" ? (
+                              <Chip
+                                size="sm"
+                                className="w-fit mx-auto ml-5"
+                                variant="ghost"
+                                value={payment[item.key]}
+                                color={
+                                  payment[item.key] === "true"
+                                    ? "green"
+                                    : payment[item.key] === "false"
+                                    ? "red"
+                                    : "gray"
+                                }
+                              />
+                            ) : (
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-medium"
+                              >
+                                {item.key === "paymentDate"
+                                  ? new Date(
+                                      payment[item.key]
+                                    ).toLocaleDateString() || "N/A"
+                                  : item.key === "createdBy"
+                                  ? payment.createdBy?.name || "N/A"
+                                  : payment[item.key] || "N/A"}
+                              </Typography>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             ) : (
               <div className="flex items-center justify-center mt-5">
                 <h2>{t("noPaymentsFound")}</h2>
               </div>
             )}
+          </div>
+        )}
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-4 mt-5">
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              nextPage={nextPage}
+              prevPage={prevPage}
+              goToPage={goToPage}
+            />
           </div>
         )}
       </ContentWrapper>

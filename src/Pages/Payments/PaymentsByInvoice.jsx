@@ -7,6 +7,7 @@ import { t } from "i18next";
 import "./style.scss";
 import {  Breadcrumbs,
   Button,
+  Chip,
   Dialog,
   DialogBody,
   DialogFooter,
@@ -17,7 +18,6 @@ import {  Breadcrumbs,
   Typography,
 } from "@material-tailwind/react";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/solid";
-import Img from "../../assets/dollar.png";
 import usePagination from "../../hooks/UsePagination";
 import Pagination from "../../components/Pagination/Pagination";
 
@@ -85,7 +85,12 @@ const PaymentsByInvoice = () => {
        window.removeEventListener("keydown", handleKeyDown);
      };
    }, []);
-
+   const TABLE_HEAD = [
+     { label: t("amount"), key: "amount" },
+     { label: t("status"), key: "status" },
+     { label: t("createdBy"), key: "createdBy" },
+     { label: t("date"), key: "paymentDate" },
+   ];
   return (
     <div className="PaymentForInvoice">
       <ContentWrapper>
@@ -132,7 +137,7 @@ const PaymentsByInvoice = () => {
                 className="right-0 font-medium text-sm flex  items-center cursor-pointer"
               >
                 <span>
-                  <AdjustmentsHorizontalIcon  />
+                  <AdjustmentsHorizontalIcon />
                 </span>
                 {t("filter")}
               </button>
@@ -224,64 +229,73 @@ const PaymentsByInvoice = () => {
             <Loader />
           </div>
         ) : payments.length > 0 ? (
-          <>
-            {payments.map((payment) => (
-              <Link
-                key={payment._id}
-                className="InvoiceItem shadow-md p-2 m-2 flex items-center gap-3 rounded-3xl"
-              >
-                <div className="logo">
-                  <span>
-                    <img
-                      src={Img}
-                      width={100}
-                      height={100}
-                      className="InvoiceImage"
-                      alt="Invoice Image"
-                    />
-                  </span>
-                </div>
-                <div>
-                  <p className="text-white">
-                    <span className="font-bold text-base mx-2">
-                      {t("amount")}:
-                    </span>
-                    {payment.amount}
-                  </p>
-                  <p className="text-white">
-                    <span className="font-bold text-base mx-2">
-                      {t("pharmacy")}:
-                    </span>
-                    {payment.pharmacy.name}
-                  </p>
-                  <p className="text-white">
-                    <span className="font-bold text-base mx-2">
-                      {t("status")}:
-                    </span>
-                    {payment.status.toString()}
-                  </p>
-                  <p className="text-white">
-                    <span className="font-bold text-base mx-2">
-                      {t("date")}:
-                    </span>
-                    {new Date(payment.paymentDate).toLocaleDateString()}
-                  </p>
-                </div>
-              </Link>
-            ))}
-            <div className="flex items-center justify-center gap-4">
-              <Pagination
-                page={page}
-                totalPages={totalPages}
-                nextPage={nextPage}
-                prevPage={prevPage}
-                goToPage={goToPage}
-              />
-            </div>
-          </>
+          <div className="overflow-x-auto  mt-5">
+            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+              <thead>
+                <tr className="bg-gray-100 border-b border-gray-200 text-xs md:text-sm lg:text-base">
+                  {TABLE_HEAD.map((item, index) => (
+                    <th key={index} className="p-2 md:p-4 text-left">
+                      {item.label}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {payments.map((Payment, index) => (
+                  <tr
+                    key={index}
+                    className="bo border-b border-gray-200 hover:bg-gray-50 text-xs md:text-sm lg:text-base"
+                  >
+                    {TABLE_HEAD.map((item, headIndex) => (
+                      <td key={headIndex} className="p-2 md:p-4 text-left">
+                        <Link>
+                          {item.key === "status" ? (
+                            <Chip
+                              size="sm"
+                              className="w-fit mx-auto ml-5"
+                              variant="ghost"
+                              value={Payment[item.key].toString() || "N/A"}
+                              color={Payment[item.key] ? "green" : "red"}
+                            />
+                          ) : (
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-medium"
+                            >
+                              {item.key === "paymentDate"
+                                ? new Date(
+                                    Payment[item.key]
+                                  ).toLocaleDateString() || "N/A"
+                                : item.key === "createdBy"
+                                ? Payment.createdBy?.name || "N/A"
+                                : item.key === "company.name"
+                                ? Payment.company?.name || "N/A"
+                                : Payment[item.key] || "N/A"}
+                            </Typography>
+                          )}
+                        </Link>
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
           <div className="flex items-center justify-center">
             <p>{t("noPaymentsFound")}</p>
+          </div>
+        )}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-4 mt-5">
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              nextPage={nextPage}
+              prevPage={prevPage}
+              goToPage={goToPage}
+            />
           </div>
         )}
       </ContentWrapper>

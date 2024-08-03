@@ -1,27 +1,27 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import ContentWrapper from "../../components/ContentWrapper/contentWrapper";
-import { getInvoice } from "../../services/api";
+import { getInvoice, updateInvoice } from "../../services/api";
 import Loader from "../../components/Loader/Loader";
 import { t } from "i18next";
 import { NoSymbolIcon } from "@heroicons/react/24/solid";
 import { Breadcrumbs } from "@material-tailwind/react";
-import InvoiceImage from "../../assets/web-design-invoice.webp";
 import "./style.scss";
 import Button from "../../components/UI/Button";
-import {} from "react-router-dom";
 
 const Invoice = ({ invoiceId, companyId, createdBy }) => {
   let { id } = useParams();
   const [invoice, setInvoice] = useState(null);
   const [loading, setLoading] = useState(true);
   const [enlargedImage, setEnlargedImage] = useState(null);
+  const [orderStatus, setOrderStatus] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await getInvoice(id);
         setInvoice(data.results);
+        setOrderStatus(data.results.orderStatus);
         console.log("Fetched invoice:", data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -40,6 +40,27 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
   const closeImageModal = () => {
     setEnlargedImage(null);
   };
+
+  const handleStatusChange = async () => {
+    let newStatus = "";
+    if (orderStatus === "preparing") {
+      newStatus = "delivering";
+    } else if (orderStatus === "delivering") {
+      newStatus = "delivered";
+    } else {
+      return; 
+    }
+
+    setOrderStatus(newStatus);
+
+    try {
+      await updateInvoice(id, { orderStatus: newStatus });
+      console.log("Order status updated successfully");
+    } catch (error) {
+      console.error("Error updating order status:", error);
+    }
+  };
+
   const data = {
     invoiceId: id,
     companyId: invoice?.company?._id,
@@ -61,7 +82,7 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
                 <Breadcrumbs>
                   <Link
                     to="/"
-                    className="opacity-60 text-black text-sm font-medium  lg:text-base lg:font-normal "
+                    className="opacity-60 text-black text-sm font-medium lg:text-base lg:font-normal "
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -74,14 +95,14 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
                   </Link>
                   <Link
                     to="/AllInvoices"
-                    className="text-sm font-medium  lg:text-base lg:font-normal  "
+                    className="text-sm font-medium lg:text-base lg:font-normal "
                   >
                     <span>{t("invoices")}</span>
                   </Link>
 
                   <Link
                     to={`/invoice/${id}`}
-                    className="text-sm font-medium  lg:text-base lg:font-normal  "
+                    className="text-sm font-medium lg:text-base lg:font-normal "
                   >
                     <span>{t("invoice")}</span>
                   </Link>
@@ -93,118 +114,123 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
                 <div className="InvoiceImg">
                   <img
                     alt="invoice"
-                    className="rounded-md m-3 shadow-lg bg-cover clickable-image"
-                    src={InvoiceImage}
-                    width={280}
-                    height={280}
-                    onClick={() => openImageModal(InvoiceImage)}
+                    className="rounded-md m-3 shadow-lg bg-cover clickable-image cursor-pointer"
+                    src={invoice.image}
+                    width={300}
+                    height={300}
+                    onClick={() => openImageModal(invoice.image)}
                   />
                 </div>
               </div>
-              <div className="col-span-12 md:col-span-6 lg:col-span-8 flex   flex-col items-center text-right  md:items-start  mt-6">
+              <div className="col-span-12 md:col-span-6 lg:col-span-8 flex flex-col items-center text-right md:items-start mt-6">
                 <div className="flex gap-20 items-center my-1 w-full">
-                  <div className="InvoiceId flex gap-1 py-1">
-                    <p className="font-bold first-line: text-base mx-1">
-                      <strong>{t("invoiceId")}:</strong>
-                    </p>
-                    <p className="font-normal  text-base text-black">{id}</p>
-                  </div>
-                </div>
-                <div className="flex  gap-20  items-center my-1   w-full ">
-                  <div className="dropComment flex gap-1  py-1  ">
-                    <p className="font-bold text-base mx-1">
-                      <strong>{t("comment")}:</strong>
-                    </p>
-                    <p className="font-normal  text-base text-black">
-                      {invoice.dropComment}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex  gap-20  items-center my-1   w-full ">
-                  <div className="dropStatus flex gap-1  py-1  ">
-                    <p className="font-normal text-base mx-1">
-                      <strong>{t("note")}:</strong>
-                    </p>
-                    <p className="font-normal  text-base text-black">
-                      {invoice.dropStatus}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-20    items-center my-1   w-full">
-                  <div className="amount flex gap-1  py-1  ">
-                    <p className="font-bold text-base mx-1">
-                      <strong>{t("amount")}:</strong>
-                    </p>
-                    <p className="font-normal  text-base text-black">
-                      {invoice.amount}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-20    items-center my-1   w-full">
-                  <div className="invoiceStatus flex gap-1  py-1  ">
-                    <p className="font-bold text-base mx-1">
-                      <strong>{t("invoiceStatus")}:</strong>
-                    </p>
-                    <p className="font-normal  text-base text-black">
-                      {invoice.invoiceStatus}
-                    </p>
-                  </div>
-                  <div className="orderStatus flex gap-1  py-1  ">
-                    <p className="font-normal text-base mx-1">
-                      <strong>{t("orderStatus")}:</strong>
-                    </p>
-                    <p className="font-normal  text-base text-black">
-                      {invoice.orderStatus}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-20   items-center my-1   w-full">
-                  <div className="companyName flex gap-1  py-1  ">
+                  <div className="companyName flex gap-1 py-1">
                     <p className="font-bold text-base mx-1">
                       <strong>{t("companyName")}:</strong>
                     </p>
-                    <p className="font-normal  text-base text-black">
+                    <p className="font-normal text-base text-black">
                       {invoice.company.name}
                     </p>
                   </div>
-                  <div className="pharmacy flex gap-1  py-1  ">
+                  <div className="pharmacy flex gap-1 py-1">
                     <p className="font-bold text-base mx-1">
                       <strong>{t("pharmacy")}:</strong>
                     </p>
-                    <p className="font-normal  text-base text-black">
+                    <p className="font-normal text-base text-black">
                       {invoice.pharmacy.name}
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-20   items-center my-1   w-full">
-                  <div className="driver flex gap-1  py-1  ">
+
+                <div className="flex gap-20 items-center my-1 w-full">
+                  <div className="invoiceStatus flex gap-1 py-1">
+                    <p className="font-bold text-base mx-1">
+                      <strong>{t("invoiceStatus")}:</strong>
+                    </p>
+                    <p className="font-normal text-base text-black">
+                      {invoice.invoiceStatus}
+                    </p>
+                  </div>
+                  <div className="orderStatus flex gap-1 py-1">
+                    <p className="font-normal text-base mx-1">
+                      <strong>{t("orderStatus")}:</strong>
+                    </p>
+                    <p className="font-normal text-base text-black">
+                      {orderStatus}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-20 items-center my-1 w-full">
+                  <div className="dropComment flex gap-1 py-1">
+                    <p className="font-bold text-base mx-1">
+                      <strong>{t("comment")}:</strong>
+                    </p>
+                    <p className="font-normal text-base text-black">
+                      {invoice.dropComment}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-20 items-center my-1 w-full">
+                  <div className="dropStatus flex gap-1 py-1">
+                    <p className="font-normal text-base mx-1">
+                      <strong>{t("note")}:</strong>
+                    </p>
+                    <p className="font-normal text-base text-black">
+                      {invoice.dropStatus}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-20 items-center my-1 w-full">
+                  <div className="amount flex gap-1 py-1">
+                    <p className="font-bold text-base mx-1">
+                      <strong>{t("amount")}:</strong>
+                    </p>
+                    <p className="font-normal text-base text-black">
+                      {invoice.amount}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-20 items-center my-1 w-full">
+                  <div className="driver flex gap-1 py-1">
                     <p className="font-bold text-base mx-1">
                       <strong>{t("driver")}:</strong>
                     </p>
-                    <p className="font-normal  text-base text-black">
+                    <p className="font-normal text-base text-black">
                       {invoice.driver.name}
                     </p>
                   </div>
-                  <div className="CreatedBy flex gap-1  py-1 ">
+                  <div className="CreatedBy flex gap-1 py-1">
                     <p className="font-bold text-base mx-1">
                       <strong>{t("createdBy")}:</strong>
                     </p>
-                    <p className="font-normal  text-base text-black">
+                    <p className="font-normal text-base text-black">
                       {invoice.createdBy.name}
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-20   items-center my-1   w-full">
-                  <div className="CreatedAt flex gap-1  py-1  ">
+                <div className="flex gap-20 items-center my-1 w-full">
+                  <div className="CreatedAt flex gap-1 py-1">
                     <p className="font-bold text-base mx-1">
                       <strong>{t("date")}:</strong>
                     </p>
-                    <p className="font-normal  text-base text-black">
+                    <p className="font-normal text-base text-black">
                       {new Date(invoice.date).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center my-1  w-full Button_Wrapper">
+                <div className="flex items-center my-1 w-full Button_Wrapper">
+                  <Button
+                    className={"w-48"}
+                    onClick={handleStatusChange}
+                    disabled={orderStatus === "delivered"}
+                  >
+                    {orderStatus === "preparing"
+                      ? t("startDelivering")
+                      : orderStatus === "delivering"
+                      ? t("markAsDelivered")
+                      : t("delivered")}
+                  </Button>
                   <Button className={"w-48"}>
                     <Link
                       to={`/MakePayment?invoiceId=${data.invoiceId}&companyId=${data.companyId}&createdById=${data.createdBy}`}
@@ -231,7 +257,7 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
               <NoSymbolIcon className="w-56 h-56" />
             </span>
             <p>
-              <strong className="font-normal  text-2xl">
+              <strong className="font-normal text-2xl">
                 Invoice not found
               </strong>
             </p>
@@ -242,7 +268,10 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
         {enlargedImage && (
           <div className="modal-overlay" onClick={closeImageModal}>
             <div className="modal" onClick={(e) => e.stopPropagation()}>
-              <span className="close" onClick={closeImageModal}>
+              <span
+                className="close w-12 bg-gray-500 text-white text-center rounded-lg"
+                onClick={closeImageModal}
+              >
                 &times;
               </span>
               <img

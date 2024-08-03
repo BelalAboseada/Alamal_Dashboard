@@ -66,6 +66,7 @@ const Pagination = ({ page, totalPages, nextPage, prevPage, goToPage }) => {
     <div className="flex items-center justify-center gap-1">
       <Button
         variant="text"
+        ripple={false}
         className="flex items-center gap-1 text-black"
         onClick={prevPage}
         disabled={page === 1}
@@ -79,6 +80,7 @@ const Pagination = ({ page, totalPages, nextPage, prevPage, goToPage }) => {
       <div className="flex items-center gap-1">{getPageItems()}</div>
       <Button
         variant="text"
+        ripple={false}
         className="flex items-center gap-1 text-black"
         onClick={nextPage}
         disabled={page === totalPages}

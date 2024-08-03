@@ -18,7 +18,6 @@ import { useEffect, useState } from "react";
 import { getAllProducts, getFilteredProducts } from "../../services/api";
 import usePagination from "../../hooks/UsePagination";
 import Loader from "../../components/Loader/Loader";
-import Img from "../../assets/product1.png";
 import Pagination from "../../components/Pagination/Pagination";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/solid";
 
@@ -65,7 +64,7 @@ const AllProducts = () => {
       const data = await getFilteredProducts(filterType, filterValue);
       setProduct(data.results);
       updateTotalPages(data.count, data.results.length);
-      console.log("Filtered Payments :", data.results);
+      console.log("Filtered Products :", data.results);
       console.log("Total Pages:", totalPages);
     } catch (error) {
       console.error("Error fetching filtered data:", error);
@@ -76,6 +75,13 @@ const AllProducts = () => {
       handleFilterSubmit();
     }
   };
+  const TABLE_HEAD = [
+    { label: t("userName"), key: "name" },
+    { label: t("description"), key: "desc" },
+    { label: t("price"), key: "unitPrice" },
+    { label: t("companyName"), key: "company" },
+    { label: t("date"), key: "createdAt" },
+  ];
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.ctrlKey && e.key === "q") {
@@ -226,47 +232,67 @@ const AllProducts = () => {
         ) : (
           <div className="content mt-5">
             {Product.length > 0 ? (
-              <>
-                <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-                  {Product.map((product) => (
-                    <Link
-                      key={product._id}
-                      className="group cursor-pointer"
-                      to={`/Product/${product._id}`}
-                    >
-                      <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-100 xl:aspect-h-8 xl:aspect-w-7">
-                        <img
-                          src={Img}
-                          alt={product.name}
-                          className="h-full w-full object-cover object-center group-hover:opacity-75"
-                        />
-                      </div>
-                      <div className="ProductInfo flex justify-between items-center">
-                        <h3 className="mt-4 mx-1 text-sm text-gray-700">
-                          {product.name}
-                        </h3>
-                        <p className="mt-4 mx-1 text-lg font-medium">
-                          {product.unitPrice}$
-                        </p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-                <div className="pagination-wrapper py-2 flex justify-center items-center mt-10">
-                  <Pagination
-                    page={page}
-                    totalPages={totalPages}
-                    nextPage={nextPage}
-                    prevPage={prevPage}
-                    goToPage={goToPage}
-                  />
-                </div>
-              </>
+              <div className="overflow-x-auto  mt-5">
+                <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+                  <thead>
+                    <tr className="bg-gray-100 border-b border-gray-200 text-xs md:text-sm lg:text-base">
+                      {TABLE_HEAD.map((item, index) => (
+                        <th key={index} className="p-2 md:p-4 text-left">
+                          {item.label}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Product.map((Product, index) => (
+                      <tr
+                        key={index}
+                        className="bo border-b border-gray-200 hover:bg-gray-50 text-xs md:text-sm lg:text-base"
+                      >
+                        {TABLE_HEAD.map((item, headIndex) => (
+                          <td key={headIndex} className="p-2 md:p-4 text-left">
+                            <Link to={`/Product/${Product._id}`}>
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-medium"
+                              >
+                                {item.key === "createdAt"
+                                  ? new Date(
+                                      Product[item.key]
+                                    ).toLocaleDateString() || "N/A"
+                                  : item.key === "company"
+                                  ? Product.company?.name || "N/A"
+                                  : ["desc", "name"].includes(item.key)
+                                  ? (Product[item.key]?.length > 30
+                                      ? `${Product[item.key].slice(0, 30)}...`
+                                      : Product[item.key]) || "N/A"
+                                  : Product[item.key] || "N/A"}
+                              </Typography>
+                            </Link>
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             ) : (
               <div className="text-center">
                 <p>{t("No products found")}</p>
               </div>
             )}
+          </div>
+        )}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-4 mt-5">
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              nextPage={nextPage}
+              prevPage={prevPage}
+              goToPage={goToPage}
+            />
           </div>
         )}
       </ContentWrapper>

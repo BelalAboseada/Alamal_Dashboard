@@ -5,8 +5,9 @@ import { getProduct } from "../../services/api";
 import Loader from "../../components/Loader/Loader";
 import { t } from "i18next";
 import { Breadcrumbs } from "@material-tailwind/react";
-import Img from "../../assets/product1.png";
 import "./style.scss";
+// import Button from "../../components/UI/Button";
+import EditProduct from "./editProduct";
 
 const Product = () => {
   let { id } = useParams();
@@ -74,9 +75,9 @@ const Product = () => {
               <div className="col-span-12 md:col-span-6 lg:col-span-4 flex items-center justify-center">
                 <div className="InvoiceImg">
                   <img
-                    alt="invoice"
+                    alt="product Image "
                     className="rounded-md m-3 shadow-lg bg-cover clickable-image"
-                    src={Img}
+                    src={product.pic}
                     width={280}
                     height={280}
                   />
@@ -84,7 +85,7 @@ const Product = () => {
               </div>
               <div className="col-span-12 md:col-span-6 lg:col-span-8 flex   flex-col items-center text-right  md:items-start  mt-6">
                 <div className="name mb-6 w-96">
-                  <h5 className="font-bold  text-base">{product.name}</h5>
+                  <h5 className="font-bold  text-base flex">{product.name}</h5>
                 </div>
                 <div className="description mb-6">
                   <p className="font-normal  text-base text-gray-700">
@@ -101,10 +102,13 @@ const Product = () => {
                 </div>
                 <div className="description mb-6"></div>
 
-                <div className="">
+                <div className="unitPrice">
                   <p className="font-medium  text-2xl text-black  ">
                     {product.unitPrice}$
                   </p>
+                </div>
+                <div className="Button_Wrapper">
+                  <EditProduct productId={product._id} />
                 </div>
               </div>
             </div>
