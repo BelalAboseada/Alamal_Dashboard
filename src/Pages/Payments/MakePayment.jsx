@@ -1,57 +1,35 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { format } from "date-fns";
 import { toast } from "react-toastify";
 import { t } from "i18next";
 import ContentWrapper from "../../components/ContentWrapper/contentWrapper";
 import {
   Input,
-  Option,
   Popover,
   PopoverContent,
   PopoverHandler,
-  Select,
 } from "@material-tailwind/react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
-import ContentLoader from "../../components/Loader/ContentLoader";
-import { CreatePayment, getPharmacies, getReps } from "../../services/api";
+import { CreatePayment } from "../../services/api";
 import { useLocation } from "react-router-dom";
 import { DayPicker } from "react-day-picker";
 import Button from "../../components/UI/Button";
 
 const MakePayment = () => {
   const [date, setDate] = useState(null);
-  const [pharmacies, setPharmacies] = useState([]);
-  const [reps, setReps] = useState([]);
   const [selectedPharmacy, setSelectedPharmacy] = useState("");
   const [selectedRep, setSelectedRep] = useState("");
   const [status, setStatus] = useState(false);
   const [amount, setAmount] = useState("");
-  const [pharmaciesLoading, setPharmaciesLoading] = useState(true);
-  const [repsLoading, setRepsLoading] = useState(true);
 
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const invoiceId = params.get("invoiceId");
   const companyId = params.get("companyId");
   const createdById = params.get("createdById");
+  const pharmacyId = params.get("pharmacyId");
+  const repId = params.get("repId");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const pharmaciesData = await getPharmacies();
-        setPharmacies(pharmaciesData);
-        setPharmaciesLoading(false);
-
-        const repsData = await getReps();
-        setReps(repsData);
-        setRepsLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
   const options = {
     position: "bottom-right",
     autoClose: 5000,
@@ -83,8 +61,8 @@ const MakePayment = () => {
         company: companyId,
         createdBy: createdById,
         amount: parseFloat(amount),
-        pharmacy: selectedPharmacy,
-        rep: selectedRep,
+        pharmacy: pharmacyId,
+        rep: repId,
         paymentDate: date ? format(date, "yyyy-MM-dd") : null,
         status,
       };
@@ -120,71 +98,6 @@ const MakePayment = () => {
           onSubmit={handleSubmit}
           className="bg-gray-100 p-5 rounded-md shadow-sm mb-5"
         >
-          <div className="mt-5 space-y-5 md:space-y-0 md:space-x-5 md:flex md:items-center md:justify-between">
-            <div className="my-2  mx-3 flex flex-col w-full ">
-              <label
-                htmlFor="Pharmacy"
-                className="block text-sm font-medium leading-6 mb-2"
-              >
-                {t("selectPharmacy")}
-              </label>
-              <Select
-                variant="standard"
-                placeholder="Select a Pharmacy"
-                id="Pharmacy"
-                className="select w-full rounded-md border-0 p-2 shadow-md  sm:text-sm sm:leading-6"
-                value={selectedPharmacy}
-                onChange={(e) => setSelectedPharmacy(e)}
-                required
-              >
-                {pharmaciesLoading ? (
-                  <div className="flex justify-center items-center ">
-                    <ContentLoader />
-                  </div>
-                ) : (
-                  pharmacies.map((pharmacy) => (
-                    <Option key={pharmacy._id} value={pharmacy._id}>
-                      {pharmacy.name}
-                    </Option>
-                  ))
-                )}
-              </Select>
-            </div>
-
-            <div className="my-2 mx-3 flex flex-col w-full ">
-              <label
-                htmlFor="Medical Rep"
-                className="block text-sm font-medium leading-6 mb-2"
-              >
-                {t("selectMedicalRep")}
-              </label>
-              <Select
-                variant="standard"
-                placeholder="Select a Medical Rep"
-                id="Medical-Rep"
-                className="select w-full rounded-md border-0 p-2 shadow-md  sm:text-sm sm:leading-6"
-                value={selectedRep}
-                onChange={(e) => setSelectedRep(e)}
-                required
-              >
-                {repsLoading ? (
-                  <div className="flex justify-center items-center">
-                    <ContentLoader />
-                  </div>
-                ) : (
-                  reps.map((rep) => (
-                    <Option key={rep._id} value={rep._id}>
-                      {rep.name}
-                    </Option>
-                  ))
-                )}
-              </Select>
-            </div>
-          </div>
-
-          <div className="mt-5 space-y-5 md:space-y-0 md:space-x-5 md:flex md:items-center md:justify-between">
-         
-          </div>
 
           <div className="mt-5 space-y-5 md:space-y-0 md:space-x-5 md:flex md:items-center md:justify-between">
             <div className="my-2 mx-3 flex flex-col w-full ">

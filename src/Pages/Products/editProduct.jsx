@@ -1,14 +1,15 @@
 import { PencilIcon } from "@heroicons/react/24/solid";
-import Button from "../../components/UI/Button"
-import { Card, CardBody, CardFooter, Dialog, Input, Typography } from "@material-tailwind/react";
+import { Card, CardBody, CardFooter, Dialog, Input, Typography,Button } from "@material-tailwind/react";
 import { t } from "i18next";
 import { useState } from "react";
 import { toast } from "react-toastify";
-// import { updateProduct } from "../../services/api";
+import { updateProduct, uploadProductImage } from "../../services/api";
+import ButtonUI from "../../components/UI/Button"
 
 const EditProduct = ({ productId  }) => {
   const [open, setOpen] = useState(false);
   const [image, setImage] = useState(null);
+  const [name, setName] = useState("");
 
   const handleOpen = () => setOpen((prevOpen) => !prevOpen);
 
@@ -23,6 +24,21 @@ const EditProduct = ({ productId  }) => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    try{
+      const updatedData = {name}
+     if (image) {
+       const uploadedImageUrl = await uploadProductImage(image);
+       updatedData.pic = uploadedImageUrl;
+     }
+     const response = await updateProduct(productId, updatedData);
+      toast.success("Product updated successfully", options);
+      console.log("Product updated successfully", response);
+      window.location.reload();
+
+    }catch(err){
+      toast.error("Error updating product!",options );
+      console.error("Error updating product!", err);
+    }
    
   };
 
@@ -36,12 +52,12 @@ const EditProduct = ({ productId  }) => {
 
   return (
     <>
-      <Button className="flex items-center text-center" onClick={handleOpen}>
+      <ButtonUI className="flex items-center text-center" onClick={handleOpen}>
         <span>
           <PencilIcon className="text-white" />
         </span>
         Edit Product
-      </Button>
+      </ButtonUI>
       <Dialog
         size="xs"
         open={open}
@@ -52,7 +68,7 @@ const EditProduct = ({ productId  }) => {
           <form onSubmit={handleSubmit}>
             <CardBody className="flex flex-col gap-4">
               <Typography variant="h4" className="title_Update">
-                {t("UpdateProfile")}
+                {t("UpdateProduct")}
               </Typography>
               <div>
                 <label
@@ -72,19 +88,42 @@ const EditProduct = ({ productId  }) => {
                   />
                 </div>
               </div>
+              <div>
+                <label
+                  htmlFor="Name"
+                  className="block text-sm font-medium leading-6"
+                >
+                  {t("userName")}
+                </label>
+                <div className="mt-2">
+                  <Input
+                    id="Name"
+                    name="Name"
+                    variant="static"
+                    type="text"
+                    autoComplete="name"
+                    autoFocus
+                    placeholder={name}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="Input w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
             </CardBody>
             <CardFooter className="pt-0 flex items-center gap-2">
-              <Button
+              <ButtonUI
                 type="submit"
                 variant="filled"
                 ripple={false}
                 className="btn_Update"
-                onClick={handleOpen}
+                onClick={handleSubmit}
               >
                 {t("update")}
-              </Button>
+              </ButtonUI>
               <Button
                 variant="text"
+                color="black"
                 onClick={handleOpen}
                 ripple={false}
                 className="hover:bg-transparent"

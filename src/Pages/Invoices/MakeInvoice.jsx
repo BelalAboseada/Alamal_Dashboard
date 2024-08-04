@@ -35,7 +35,7 @@ const MakeInvoice = () => {
   const [totalPaid, setTotalPaid] = useState("");
   const [invoiceType, setInvoiceType] = useState("");
   const [invoiceStatus, setInvoiceStatus] = useState("");
-  const [orderStatus, setOrderStatus] = useState("");
+  const [orderStatus, setOrderStatus] = useState("preparing");
   const [amount, setAmount] = useState("");
   const [comment, setComment] = useState("");
   const [note, setNote] = useState("");
@@ -317,26 +317,7 @@ const handleSubmit = async (e) => {
             </div>
           </div>
           <div className="mt-5 space-y-5 md:space-y-0 md:space-x-5 md:flex md:items-center md:justify-between">
-            <div className="my-2 mx-3 flex flex-col w-full ">
-              <label
-                htmlFor="Select Order Status"
-                className="block text-sm font-medium leading-6 mb-2"
-              >
-                {t("selectOrderStatus")}
-              </label>
-              <Select
-                variant="standard"
-                placeholder="Select Order Status"
-                className="select w-full rounded-md border-0 py-2 shadow-md outline-none focus:outline-none sm:text-sm sm:leading-6"
-                value={orderStatus}
-                onChange={(e) => setOrderStatus(e)}
-                required
-              >
-                <Option value="preparing">Preparing</Option>
-                <Option value="delivering">delivering</Option>
-                <Option value="delivered">delivered</Option>
-              </Select>
-            </div>
+         
           </div>
           <div className="mt-5 space-y-5 md:space-y-0 md:space-x-5 md:flex md:items-center md:justify-between5">
             <div className="my-2 mx-3 flex flex-col w-full ">

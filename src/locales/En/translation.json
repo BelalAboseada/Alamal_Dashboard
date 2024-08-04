@@ -145,5 +145,9 @@
   "delete": "Delete Account",
   "delContent": " Deleting your account is a permanent action and cannot be undone.All your data, including your profile information, settings, and any saved items, will be permanently erased. Please be certain before proceeding.",
   "delHead": "You Should read  this",
-  "delHeader": "Your Attention is Required"
+  "delHeader": "Your Attention is Required",
+  "AddPL" : "Add Product Line",
+  "selactProd" : "Select Product",
+  "PL": "Product Lines",
+  "actions": "actions"
 }

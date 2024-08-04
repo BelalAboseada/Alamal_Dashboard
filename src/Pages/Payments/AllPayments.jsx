@@ -22,6 +22,7 @@ import {
   getAllPayments,
   getFilteredPayments,
   updatePayment,
+  updateProfile,
 } from "../../services/api";
 import Pagination from "../../components/Pagination/Pagination";
 import Loader from "../../components/Loader/Loader";
@@ -100,38 +101,43 @@ const AllPayments = () => {
     };
   }, []);
 
- const handleConfirm = async (paymentId) => {
-   setLoadingId(paymentId);
-   try {
-     const result = await updatePayment(paymentId, {
-       status: true,
-     });
-     console.log("Update result:", result);
+const handleConfirm = async (paymentId) => {
+  setLoadingId(paymentId);
+  try {
+    const result = await updatePayment(paymentId, {
+      status: true,
+    });
+    console.log("Update result:", result);
 
-     // Fetch updated payments
-     const data = await getAllPayments(page);
-     setPayments(data.results);
-     updateTotalPages(data.count);
+    // Fetch updated payments
+    const data = await getAllPayments(page);
+    setPayments(data.results);
+    updateTotalPages(data.count);
 
-     // Retrieve user data from local storage
-     const user = JSON.parse(localStorage.getItem("user"));
-     if (user) {
-       // Find the confirmed payment and add its amount to the user's balance
-       const confirmedPayment = data.results.find(
-         (payment) => payment._id === paymentId
-       );
-       if (confirmedPayment) {
-         user.balance += confirmedPayment.amount;
-         // Update local storage with the new balance
-         localStorage.setItem("user", JSON.stringify(user));
-       }
-     }
-   } catch (error) {
-     console.error("Error updating payment:", error);
-   } finally {
-     setLoadingId(null);
-   }
- };
+    // Retrieve user data from local storage
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      // Find the confirmed payment and add its amount to the user's balance
+      const confirmedPayment = data.results.find(
+        (payment) => payment._id === paymentId
+      );
+      if (confirmedPayment) {
+        user.balance += confirmedPayment.amount;
+        // Update local storage with the new balance
+        localStorage.setItem("user", JSON.stringify(user));
+
+        // Update the user profile in the database
+        await updateProfile(user._id, { balance: user.balance });
+        console.log("Updated user profile:", user);
+      }
+    }
+  } catch (error) {
+    console.error("Error updating payment:", error);
+  } finally {
+    setLoadingId(null);
+  }
+};
+
   const TABLE_HEAD = [
     { label: t("amount"), key: "amount" },
     { label: t("status"), key: "status" },
@@ -316,7 +322,7 @@ const AllPayments = () => {
                                       : "bg-green-500"
                                   }`}
                                   onClick={() => handleConfirm(payment._id)}
-                                  disabled={payment.confirmed === "true"}
+                                  disabled={payment.status === "true"}
                                 >
                                   {payment.status === "true" ? (
                                     <CheckCircleIcon className="text-white" />

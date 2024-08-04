@@ -15,27 +15,35 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
-import { AdjustmentsHorizontalIcon, CheckIcon } from "@heroicons/react/24/solid";
+import {
+  AdjustmentsHorizontalIcon,
+  CheckIcon,
+} from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import usePagination from "../../hooks/UsePagination";
 import Loader from "../../components/Loader/Loader";
 import {
   getAllTransactions,
   getFilteredTransactions,
+  getUserById,
+  updateProfile,
   updateTransaction,
 } from "../../services/api";
 import Pagination from "../../components/Pagination/Pagination";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import ContentLoader from "../../components/Loader/ContentLoader";
-import "./style.scss"
+import "./style.scss";
+import { toast } from "react-toastify";
 
 const AllTrans = () => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const userId = storedUser._id
   const [open, setOpen] = useState(false);
   const [trans, setTrans] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filterType, setFilterType] = useState("");
   const [filterValue, setFilterValue] = useState("");
-  const [loadingId, setLoadingId] = useState(null); 
+  const [loadingId, setLoadingId] = useState(null);
 
   const { page, nextPage, prevPage, goToPage, totalPages, updateTotalPages } =
     usePagination(1);
@@ -44,7 +52,7 @@ const AllTrans = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const data = await getAllTransactions(page);
+        const data = await getAllTransactions(page, userId);
         setTrans(data.results);
         updateTotalPages(data.count);
         console.log("Fetched trans:", data.results);
@@ -98,25 +106,97 @@ const AllTrans = () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
+const handleConfirm = async (transactionId) => {
+  setLoadingId(transactionId);
+  try {
+    await updateTransaction(transactionId, { confirmed: "yes" });
 
-  const handleConfirm = async (transactionId) => {
-    console.log("Attempting to confirm transaction with ID:", transactionId);
-    setLoadingId(transactionId); 
-    try {
-      const result = await updateTransaction(transactionId, {
-        confirmed: "yes",
-      });
-      console.log("Update result:", result);
-      const data = await getAllTransactions(page);
-      console.log("Fetched transactions after update:", data.results);
-      setTrans(data.results);
-      updateTotalPages(data.count);
-    } catch (error) {
-      console.error("Error updating transaction:", error);
-    } finally {
-      setLoadingId(null); 
+    // Fetch updated transactions
+    const data = await getAllTransactions(page ,userId);
+    setTrans(data.results);
+    updateTotalPages(data.count);
+
+    // Retrieve user data from local storage
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      const confirmedTransaction = data.results.find(
+        (transaction) => transaction._id === transactionId
+      );
+      if (confirmedTransaction) {
+        const senderId = confirmedTransaction.sender._id;
+        const receiverId = confirmedTransaction.receiver._id;
+        console.log("senderId => ", senderId);
+        console.log("receiverId => ", receiverId);
+
+        // Fetch sender and receiver profiles
+        const [senderProfile, receiverProfile] = await Promise.all([
+          getUserById(senderId),
+          getUserById(receiverId),
+        ]);
+        console.log("Sender profile:", senderProfile);
+        console.log("Receiver profile:", receiverProfile);
+
+        if (senderProfile && receiverProfile) {
+          // Safely access balance
+          const senderBalance = senderProfile.results?.balance ?? 0;
+          const receiverBalance = receiverProfile.results?.balance ?? 0;
+          console.log("senderBalance => ", senderBalance);
+          console.log("receiverBalance => ", receiverBalance);
+          console.log(
+            "confirmedTransaction.amount =>",
+            confirmedTransaction.amount
+          );
+
+          // Check if the amount is more than the receiver's balance
+          if (confirmedTransaction.amount > receiverBalance) {
+            toast.error("Transaction amount exceeds receiver's balance");
+            console.log("Transaction amount exceeds receiver's balance");
+            // Revert the transaction confirmation
+            await updateTransaction(transactionId, { confirmed: "no" });
+            window.location.reload()
+            return;
+          }
+
+          // Update sender's balance
+          senderProfile.results.balance =
+            senderBalance - confirmedTransaction.amount;
+          await updateProfile(senderId, {
+            balance: senderProfile.results.balance,
+          });
+
+          // Update receiver's balance
+          receiverProfile.results.balance =
+            receiverBalance + confirmedTransaction.amount;
+          await updateProfile(receiverId, {
+            balance: receiverProfile.results.balance,
+          });
+
+          // If the current user is the sender or receiver, update the local storage
+          if (user._id === senderId || user._id === receiverId) {
+            if (user._id === senderId) {
+              user.balance = senderProfile.results.balance;
+            } else if (user._id === receiverId) {
+              user.balance = receiverProfile.results.balance;
+            }
+            localStorage.setItem("user", JSON.stringify(user));
+          }
+
+          console.log(
+            "Updated user profiles:",
+            senderProfile.results,
+            receiverProfile.results
+          );
+        }
+      }
     }
-  };
+  } catch (error) {
+    console.error("Error updating transaction:", error);
+  } finally {
+    setLoadingId(null);
+  }
+};
+
+
 
   const TABLE_HEAD = [
     { label: t("amount"), key: "amount" },

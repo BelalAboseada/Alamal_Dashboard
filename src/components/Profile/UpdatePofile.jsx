@@ -37,31 +37,37 @@ export function UpdateProfile() {
     progress: undefined,
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const updatedData = { name, email };
-      if (password) {
-        updatedData.password = password;
-      }
-      if (image) {
-        const imageUrl = await uploadAvatar(image);
-        updatedData.profilePic = imageUrl;
-      }
-
-      const response = await updateProfile(user._id, updatedData);
-      toast.success("Profile updated successfully", options);
-      console.log("Profile updated successfully", response);
-      localStorage.setItem("user", JSON.stringify({ ...user, ...updatedData }));
-      handleOpen();
-
-      navigate("/profile");
-      window.location.reload();
-    } catch (error) {
-      toast.error("An error occurred while updating the profile", options);
-      console.error(error);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const updatedData = { name, email };
+    if (password) {
+      updatedData.password = password;
     }
-  };
+    if (image) {
+      const imageUrl = await uploadAvatar(image);
+      updatedData.profilePic = imageUrl;
+    }
+
+    const response = await updateProfile(user._id, updatedData);
+    toast.success("Profile updated successfully", options);
+    console.log("Profile updated successfully", response);
+
+    // Remove user data and token from local storage
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+
+    // Navigate to the login page
+    navigate("/signIn");
+
+    // Optionally, reload the page
+    window.location.reload();
+  } catch (error) {
+    toast.error("An error occurred while updating the profile", options);
+    console.error(error);
+  }
+};
+
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];

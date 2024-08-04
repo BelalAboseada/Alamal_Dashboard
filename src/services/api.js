@@ -86,7 +86,8 @@ export const updateProfile = async (userId, updatedData) => {
     console.log("err while updating profile =>  ", error.message);
   }
 };
-// Delete account 
+
+// Delete account
 
 export const deleteAccount = async (userId) => {
   try {
@@ -96,15 +97,24 @@ export const deleteAccount = async (userId) => {
     console.log("err while deleting account =>  ", error.message);
   }
 };
+//  get uer by Id
+
+export const getUserById = async (userId) => {
+  try {
+    const response = await axios.get(`${ApiUrl}/users/${userId}`);
+    return response.data;
+  } catch (error) {
+    throw error.response? error.response.data : { message: "Network error" };
+  }
+};
 
 // get All Users
-
 export const getAllUsers = async (page) => {
   try {
     const response = await axios.get(`${ApiUrl}/users?page=${page}`);
     return response.data.results;
   } catch (error) {
-    throw error.response? error.response.data : { message: "Network error" };
+    throw error.response ? error.response.data : { message: "Network error" };
   }
 };
 // u
@@ -177,6 +187,30 @@ export const makeInvoice = async (invoiceData, Image) => {
     throw error.response ? error.response.data : { message: "Network error" };
   }
 };
+// Add product Line
+
+export const addProductLine = async (productLineData, invoiceId) => {
+  try {
+    const response = await axios.post(
+      `${ApiUrl}/invoice/product/${invoiceId}`,
+      productLineData
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : { message: "Network error" };
+  }
+};
+// delete product line
+
+export const deleteProductLine = async (lineId, invoiceId) => {
+  try {
+    await axios.delete(`${ApiUrl}/invoice/${invoiceId}/line/${lineId}`);
+    const response = await axios.get(`/invoices/${invoiceId}`);
+    return response.data.productLines;
+  } catch (error) {
+    throw error.response ? error.response.data : { message: "Network error" };
+  }
+};
 
 // get All Invoices
 export const getAllInvoicesUsers = async (page, userId) => {
@@ -192,9 +226,7 @@ export const getAllInvoicesUsers = async (page, userId) => {
 // get All Invoices
 export const getAllInvoices = async (page) => {
   try {
-    const response = await axios.get(
-      `${ApiUrl}/invoice/?page=${page}`
-    );
+    const response = await axios.get(`${ApiUrl}/invoice/?page=${page}`);
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };
@@ -227,7 +259,10 @@ export const getFilteredInvoices = async (filterType, filterValue) => {
 
 export const updateInvoice = async (invoiceId, updatedInvoiceData) => {
   try {
-    const response = await axios.put(`${ApiUrl}/invoice/${invoiceId}`, updatedInvoiceData);
+    const response = await axios.put(
+      `${ApiUrl}/invoice/${invoiceId}`,
+      updatedInvoiceData
+    );
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };
@@ -387,14 +422,26 @@ export const addProduct = async (productData) => {
 
 // update Product
 
-// export const updateProduct = async (productId, updatedProductData) => {
-//   try {
-
-  
-//   } catch (err) {
-//     throw err.response ? err.response.data : { message: "Network error" };
-//   }
-// };
+export const updateProduct = async (productId, updatedData) => {
+  try {
+    let image = updatedData.image;
+    if (image) {
+      image = await uploadProductImage(image);
+      console.log("Image URL in updateProduct:", image);
+    }
+    const fullInvoiceData = {
+      ...updatedData,
+      image,
+    };
+    const response = await axios.put(
+      `${ApiUrl}/product/${productId}`,
+      fullInvoiceData
+    );
+    return response.data;
+  } catch (err) {
+    throw err.response ? err.response.data : { message: "Network error" };
+  }
+};
 
 // get Product
 
@@ -449,9 +496,11 @@ export const makeVisit = async (visitData) => {
 
 //getAllTrans
 
-export const getAllTransactions = async (page) => {
+export const getAllTransactions = async (page, userId) => {
   try {
-    const response = await axios.get(`${ApiUrl}/trans?page=${page}`);
+    const response = await axios.get(
+      `${ApiUrl}/trans/user/${userId}?page=${page}`
+    );
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };

@@ -30,7 +30,10 @@ const MakeTransaction = () => {
     const fetchData = async () => {
       try {
         const receiversData = await getAllUsers();
-        setReceivers(receiversData);
+             const accountants = receiversData.filter(
+               (receiver) => receiver.role === "accountant"
+             );
+        setReceivers(accountants);
         setReceiversLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);

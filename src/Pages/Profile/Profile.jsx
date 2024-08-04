@@ -46,7 +46,7 @@ const Profile = () => {
     console.log("User Data:", storedUser);
 
     if (storedUser) {
-      setUser(storedUser);
+      setUser(storedUser);  
     }
 
     if (token) {
@@ -105,7 +105,7 @@ const Profile = () => {
                     <Chip
                       variant="filled"
                       color={user.isActive ? "green" : "red"}
-                      value={user.isActive ? "online" : "Offline"}
+                      value={user.isActive ? "Active" : "InActive"}
                       className="w-fit"
                     />
                   </div>
