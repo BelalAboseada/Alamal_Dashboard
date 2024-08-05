@@ -34,10 +34,14 @@ import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import ContentLoader from "../../components/Loader/ContentLoader";
 import "./style.scss";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 const AllTrans = () => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    const userId = storedUser._id
+  const user = useSelector((state) => state.user.user);
+  // const User = JSON.parse(localStorage.getItem("user"))
+  const userId = user._id;
+  const isAdmin = user.role === "admin";
+  const canConfirm = user.role === "accountant" || user.role === "admin";
   const [open, setOpen] = useState(false);
   const [trans, setTrans] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -52,7 +56,7 @@ const AllTrans = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const data = await getAllTransactions(page, userId);
+        const data = await getAllTransactions(page, userId, isAdmin);
         setTrans(data.results);
         updateTotalPages(data.count);
         console.log("Fetched trans:", data.results);
@@ -106,97 +110,95 @@ const AllTrans = () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
-const handleConfirm = async (transactionId) => {
-  setLoadingId(transactionId);
-  try {
-    await updateTransaction(transactionId, { confirmed: "yes" });
+  const handleConfirm = async (transactionId) => {
+    setLoadingId(transactionId);
+    try {
+      await updateTransaction(transactionId, { confirmed: "yes" });
 
-    // Fetch updated transactions
-    const data = await getAllTransactions(page ,userId);
-    setTrans(data.results);
-    updateTotalPages(data.count);
+      // Fetch updated transactions
+      const data = await getAllTransactions(page, userId);
+      setTrans(data.results);
+      updateTotalPages(data.count);
 
-    // Retrieve user data from local storage
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user) {
-      const confirmedTransaction = data.results.find(
-        (transaction) => transaction._id === transactionId
-      );
-      if (confirmedTransaction) {
-        const senderId = confirmedTransaction.sender._id;
-        const receiverId = confirmedTransaction.receiver._id;
-        console.log("senderId => ", senderId);
-        console.log("receiverId => ", receiverId);
+      // Retrieve user data from local storage
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user) {
+        const confirmedTransaction = data.results.find(
+          (transaction) => transaction._id === transactionId
+        );
+        if (confirmedTransaction) {
+          const senderId = confirmedTransaction.sender._id;
+          const receiverId = confirmedTransaction.receiver._id;
+          console.log("senderId => ", senderId);
+          console.log("receiverId => ", receiverId);
 
-        // Fetch sender and receiver profiles
-        const [senderProfile, receiverProfile] = await Promise.all([
-          getUserById(senderId),
-          getUserById(receiverId),
-        ]);
-        console.log("Sender profile:", senderProfile);
-        console.log("Receiver profile:", receiverProfile);
+          // Fetch sender and receiver profiles
+          const [senderProfile, receiverProfile] = await Promise.all([
+            getUserById(senderId),
+            getUserById(receiverId),
+          ]);
+          console.log("Sender profile:", senderProfile);
+          console.log("Receiver profile:", receiverProfile);
 
-        if (senderProfile && receiverProfile) {
-          // Safely access balance
-          const senderBalance = senderProfile.results?.balance ?? 0;
-          const receiverBalance = receiverProfile.results?.balance ?? 0;
-          console.log("senderBalance => ", senderBalance);
-          console.log("receiverBalance => ", receiverBalance);
-          console.log(
-            "confirmedTransaction.amount =>",
-            confirmedTransaction.amount
-          );
+          if (senderProfile && receiverProfile) {
+            // Safely access balance
+            const senderBalance = senderProfile.results?.balance ?? 0;
+            const receiverBalance = receiverProfile.results?.balance ?? 0;
+            console.log("senderBalance => ", senderBalance);
+            console.log("receiverBalance => ", receiverBalance);
+            console.log(
+              "confirmedTransaction.amount =>",
+              confirmedTransaction.amount
+            );
 
-          // Check if the amount is more than the receiver's balance
-          if (confirmedTransaction.amount > receiverBalance) {
-            toast.error("Transaction amount exceeds receiver's balance");
-            console.log("Transaction amount exceeds receiver's balance");
-            // Revert the transaction confirmation
-            await updateTransaction(transactionId, { confirmed: "no" });
-            window.location.reload()
-            return;
-          }
-
-          // Update sender's balance
-          senderProfile.results.balance =
-            senderBalance - confirmedTransaction.amount;
-          await updateProfile(senderId, {
-            balance: senderProfile.results.balance,
-          });
-
-          // Update receiver's balance
-          receiverProfile.results.balance =
-            receiverBalance + confirmedTransaction.amount;
-          await updateProfile(receiverId, {
-            balance: receiverProfile.results.balance,
-          });
-
-          // If the current user is the sender or receiver, update the local storage
-          if (user._id === senderId || user._id === receiverId) {
-            if (user._id === senderId) {
-              user.balance = senderProfile.results.balance;
-            } else if (user._id === receiverId) {
-              user.balance = receiverProfile.results.balance;
+            // Check if the amount is more than the receiver's balance
+            if (confirmedTransaction.amount > receiverBalance) {
+              toast.error("Transaction amount exceeds receiver's balance");
+              console.log("Transaction amount exceeds receiver's balance");
+              // Revert the transaction confirmation
+              await updateTransaction(transactionId, { confirmed: "no" });
+              window.location.reload();
+              return;
             }
-            localStorage.setItem("user", JSON.stringify(user));
-          }
 
-          console.log(
-            "Updated user profiles:",
-            senderProfile.results,
-            receiverProfile.results
-          );
+            // Update sender's balance
+            senderProfile.results.balance =
+              senderBalance - confirmedTransaction.amount;
+            await updateProfile(senderId, {
+              balance: senderProfile.results.balance,
+            });
+
+            // Update receiver's balance
+            receiverProfile.results.balance =
+              receiverBalance + confirmedTransaction.amount;
+            await updateProfile(receiverId, {
+              balance: receiverProfile.results.balance,
+            });
+
+            // If the current user is the sender or receiver, update the local storage
+            if (user._id === senderId || user._id === receiverId) {
+              if (user._id === senderId) {
+                user.balance = senderProfile.results.balance;
+              } else if (user._id === receiverId) {
+                user.balance = receiverProfile.results.balance;
+              }
+              localStorage.setItem("user", JSON.stringify(user));
+            }
+
+            console.log(
+              "Updated user profiles:",
+              senderProfile.results,
+              receiverProfile.results
+            );
+          }
         }
       }
+    } catch (error) {
+      console.error("Error updating transaction:", error);
+    } finally {
+      setLoadingId(null);
     }
-  } catch (error) {
-    console.error("Error updating transaction:", error);
-  } finally {
-    setLoadingId(null);
-  }
-};
-
-
+  };
 
   const TABLE_HEAD = [
     { label: t("amount"), key: "amount" },
@@ -204,8 +206,10 @@ const handleConfirm = async (transactionId) => {
     { label: t("sender"), key: "sender" },
     { label: t("receiverName"), key: "receiver" },
     { label: t("note"), key: "note" },
-    { label: t("actions"), key: "actions" },
   ];
+  if (canConfirm) {
+    TABLE_HEAD.push({ label: t("actions"), key: "actions" });
+  }
 
   return (
     <div className="AllTrans">

@@ -17,9 +17,20 @@ import AllProducts from "../Pages/Products/AllProducts";
 import Product from "../Pages/Products/Product";
 import CreateProduct from "../Pages/Products/CreateProduct";
 import MakeVisit from "../Pages/Visits/makeVisit";
+import ProtectedRoute from "./ProtectedRoute";
+import { useSelector } from "react-redux";
 
 const AppRoutes = () => {
   const location = useLocation();
+  const user = useSelector((state) => state.user);
+
+  const canCreateInvoice = user?.role !== "driver" && user?.role !== "rep";
+  const canCreateProduct =
+    user?.role !== "driver" &&
+    user?.role !== "rep" &&
+    user?.role !== "pharmacy";
+  const canCreateTrans = user?.role !== "accountant";
+
   return (
     <Routes location={location} key={location.pathname}>
       <Route index element={<Profile />} />
@@ -27,12 +38,28 @@ const AppRoutes = () => {
       <Route path="/signIn" element={<SignIn />} />
       <Route path="/SignUp" element={<SignUp />} />
       <Route path="/Profile" element={<Profile />} />
-      <Route path="/MakeInvoice" element={<MakeInvoice />} />
+      <Route
+        path="/MakeInvoice"
+        element={
+          <ProtectedRoute
+            element={<MakeInvoice />}
+            isAllowed={canCreateInvoice}
+          />
+        }
+      />
       <Route path="/AllInvoices" element={<AllInvoices />} />
       <Route path="/Invoice/:id" element={<Invoice />} />
-      <Route path="/ALlProducts" element={<AllProducts />} />
+      <Route path="/AllProducts" element={<AllProducts />} />
       <Route path="/Product/:id" element={<Product />} />
-      <Route path="/MakeProduct" element={<CreateProduct />} />
+      <Route
+        path="/MakeProduct"
+        element={
+          <ProtectedRoute
+            element={<CreateProduct />}
+            isAllowed={canCreateProduct}
+          />
+        }
+      />
       <Route path="/AllPayments" element={<AllPayments />} />
       <Route path="/MakePayment" element={<MakePayment />} />
       <Route path="/payment/invoice/:id" element={<PaymentsByInvoice />} />
@@ -40,7 +67,15 @@ const AppRoutes = () => {
       <Route path="/makeVisit" element={<MakeVisit />} />
       <Route path="/AllVisits" element={<AllVisits />} />
       <Route path="/AllTransactions" element={<AllTrans />} />
-      <Route path="/MakeTransactions" element={<MakeTransaction />} />
+      <Route
+        path="/MakeTransactions"
+        element={
+          <ProtectedRoute
+            element={<MakeTransaction />}
+            isAllowed={canCreateTrans}
+          />
+        }
+      />
     </Routes>
   );
 };

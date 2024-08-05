@@ -84,8 +84,8 @@ const AddProductLine = ({ invoiceId }) => {
 
   return (
     <>
-      <ButtonUi onClick={handleOpen} className={`w-48`}>{t("AddPL")}</ButtonUi>
-      {loading ? (
+      <ButtonUi onClick={handleOpen} className={`w-full`}>{t("AddPL")}</ButtonUi>
+      {loading ? ( 
         <Loader />
       ) : (
         <Dialog size="xs" open={open} className="bg-transparent shadow-none">

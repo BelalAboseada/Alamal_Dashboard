@@ -104,7 +104,7 @@ export const getUserById = async (userId) => {
     const response = await axios.get(`${ApiUrl}/users/${userId}`);
     return response.data;
   } catch (error) {
-    throw error.response? error.response.data : { message: "Network error" };
+    throw error.response ? error.response.data : { message: "Network error" };
   }
 };
 
@@ -496,11 +496,12 @@ export const makeVisit = async (visitData) => {
 
 //getAllTrans
 
-export const getAllTransactions = async (page, userId) => {
+export const getAllTransactions = async (page, userId, isAdmin) => {
   try {
-    const response = await axios.get(
-      `${ApiUrl}/trans/user/${userId}?page=${page}`
-    );
+    const url = isAdmin
+      ? `${ApiUrl}/trans/?page=${page}`
+      : `${ApiUrl}/trans/user/${userId}?page=${page}`;
+    const response = await axios.get(url);
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };

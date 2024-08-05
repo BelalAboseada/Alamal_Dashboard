@@ -41,8 +41,10 @@ const handleSubmit = async (e) => {
   e.preventDefault();
   try {
     const updatedData = { name, email };
+  let passwordUpdated = false;
     if (password) {
       updatedData.password = password;
+      passwordUpdated = true;
     }
     if (image) {
       const imageUrl = await uploadAvatar(image);
@@ -58,7 +60,9 @@ const handleSubmit = async (e) => {
     localStorage.removeItem("token");
 
     // Navigate to the login page
-    navigate("/signIn");
+    if (passwordUpdated) {
+      navigate("/signIn");
+    }
 
     // Optionally, reload the page
     window.location.reload();

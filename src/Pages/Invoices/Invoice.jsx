@@ -10,6 +10,7 @@ import "./style.scss";
 import Button from "../../components/UI/Button";
 import AddProductLine from "./AddProductLine";
 import ProductLinesTable from "./ProductLine";
+import { useSelector } from "react-redux";
 
 const Invoice = ({ invoiceId, companyId, createdBy }) => {
   let { id } = useParams();
@@ -17,7 +18,9 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
   const [loading, setLoading] = useState(true);
   const [enlargedImage, setEnlargedImage] = useState(null);
   const [orderStatus, setOrderStatus] = useState("");
-
+  const user = useSelector((state) => state.user.user);
+  const canConfirmDelivering =
+    user?.role !== "pharmacy" && user?.role !== "accountant";
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -42,6 +45,7 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
   const closeImageModal = () => {
     setEnlargedImage(null);
   };
+  const canCreatePayment = user?.role !== "pharmacy";
 
   const handleStatusChange = async () => {
     let newStatus = "";
@@ -67,7 +71,7 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
     invoiceId: id,
     companyId: invoice?.company?._id,
     createdBy: invoice?.createdBy?._id,
-    pharmacyId:invoice?.pharmacy?._id,
+    pharmacyId: invoice?.pharmacy?._id,
     repId: invoice?.rep?._id,
   };
 
@@ -233,9 +237,11 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
                     </div>
                   </div>
                   <div className=" my-1 w-full Button_Wrapper">
-                    <div className="flex ">
+                    <div className="flex  w-96">
+                      {canConfirmDelivering && 
+                      
                       <Button
-                        className={`w-48 ${
+                        className={`w-full ${
                           orderStatus === "delivered" ? "hidden" : ""
                         }`}
                         onClick={handleStatusChange}
@@ -247,18 +253,21 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
                           ? t("mark As Delivered")
                           : t("delivered")}
                       </Button>
+                      }
                       <AddProductLine invoiceId={id} />
                     </div>
-                    <div className="flex">
-                      <Button className={"w-48"}>
-                        <Link
-                          to={`/MakePayment?invoiceId=${data.invoiceId}&companyId=${data.companyId}&createdById=${data.createdBy}&pharmacyId=${data.pharmacyId}&repId=${data.repId}`}
-                          className="text-white w-full"
-                        >
-                          {t("createPayment")}
-                        </Link>
-                      </Button>
-                      <Button className={"w-48"}>
+                    <div className="flex w-96">
+                      {canCreatePayment && (
+                        <Button className={"w-full"}>
+                          <Link
+                            to={`/MakePayment?invoiceId=${data.invoiceId}&companyId=${data.companyId}&createdById=${data.createdBy}&pharmacyId=${data.pharmacyId}&repId=${data.repId}`}
+                            className="text-white w-full"
+                          >
+                            {t("createPayment")}
+                          </Link>
+                        </Button>
+                      )}
+                      <Button className={"w-full"}>
                         <Link
                           to={`/payment/invoice/${id}`}
                           className="text-white w-full"

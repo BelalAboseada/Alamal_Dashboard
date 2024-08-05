@@ -61,8 +61,11 @@ export function SidebarWithBurgerMenu() {
   const handleOpen = (value) => {
     setOpen(open === value ? 0 : value);
   };
-
-  const options = {
+  // Determine user roles
+  const canCreateInvoice = user?.role !== "driver" && user?.role !== "rep";
+  const canCreateProduct = user?.role !== "driver" && user?.role !== "rep" &&  user?.role  !== "pharmacy";
+ const canCreateTrans = user?.role !== "accountant";
+ const options = {
     position: "bottom-right",
     autoClose: 5000,
     hideProgressBar: false,
@@ -188,12 +191,14 @@ export function SidebarWithBurgerMenu() {
               </ListItem>
               <AccordionBody className="py-1">
                 <List className="p-0">
-                  <ListItem ripple={false}>
-                    <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                    </ListItemPrefix>
-                    <Link to={"MakeInvoice"}>{t("createInvoices")}</Link>
-                  </ListItem>
+                  {canCreateInvoice && (
+                    <ListItem ripple={false}>
+                      <ListItemPrefix>
+                        <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                      </ListItemPrefix>
+                      <Link to={"MakeInvoice"}>{t("createInvoices")}</Link>
+                    </ListItem>
+                  )}
                   <ListItem ripple={false}>
                     <ListItemPrefix>
                       <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
@@ -234,12 +239,14 @@ export function SidebarWithBurgerMenu() {
               </ListItem>
               <AccordionBody className="py-1">
                 <List className="p-0">
-                  <ListItem ripple={false}>
-                    <ListItemPrefix>
-                      <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
-                    </ListItemPrefix>
-                    <Link to={"MakeProduct"}>{t("createProduct")}</Link>
-                  </ListItem>
+                  {canCreateProduct && (
+                    <ListItem ripple={false}>
+                      <ListItemPrefix>
+                        <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
+                      </ListItemPrefix>
+                      <Link to={"MakeProduct"}>{t("createProduct")}</Link>
+                    </ListItem>
+                  )}
                   <ListItem ripple={false}>
                     <ListItemPrefix>
                       <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
@@ -367,12 +374,14 @@ export function SidebarWithBurgerMenu() {
               </ListItem>
               <AccordionBody className="py-1">
                 <List className="p-0">
+                  {canCreateTrans && 
                   <ListItem ripple={false}>
                     <ListItemPrefix>
                       <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
                     </ListItemPrefix>
                     <Link to={"/MakeTransactions"}>{t("createTrans")}</Link>
                   </ListItem>
+                  }
                   <ListItem ripple={false}>
                     <ListItemPrefix>
                       <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
