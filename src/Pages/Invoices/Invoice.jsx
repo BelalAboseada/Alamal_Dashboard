@@ -27,7 +27,6 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
         const data = await getInvoice(id);
         setInvoice(data.results);
         setOrderStatus(data.results.orderStatus);
-        console.log("Fetched invoice:", data);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -61,7 +60,6 @@ const Invoice = ({ invoiceId, companyId, createdBy }) => {
 
     try {
       await updateInvoice(id, { orderStatus: newStatus });
-      console.log("Order status updated successfully");
     } catch (error) {
       console.error("Error updating order status:", error);
     }

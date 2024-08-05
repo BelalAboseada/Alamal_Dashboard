@@ -100,7 +100,6 @@ const handleSubmit = async (e) => {
 
   try {
     const imageUrl = await uploadInvoiceImage(image); 
-    console.log(imageUrl);
 
 
     const invoiceData = {
@@ -147,7 +146,6 @@ const handleSubmit = async (e) => {
    const file = event.target.files[0];
    if (file) {
      setImage(file);
-     console.log("Selected file:", file);
    }
  };
 

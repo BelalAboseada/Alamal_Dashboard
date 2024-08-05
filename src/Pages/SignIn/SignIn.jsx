@@ -26,7 +26,7 @@ const SignIn = () => {
     setLoading(true);
     try {
       const data = await signIn(email, password);
-      console.log("API response:", data);
+
       const token = data?.token;
       const user = data?.isFound;
 

@@ -34,7 +34,6 @@ export function DeleteAccount({ userId }) {
       const response = await deleteAccount(userId);
       if (response) {
         setOpen(false);
-        console.log("Account deleted successfully!");
         localStorage.removeItem("user");
         window.location.reload();
         toast.success("Account deleted successfully!", options);

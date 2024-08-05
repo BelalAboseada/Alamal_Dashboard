@@ -1,17 +1,28 @@
+/* eslint-disable react/prop-types */
 import { PencilIcon } from "@heroicons/react/24/solid";
-import { Card, CardBody, CardFooter, Dialog, Input, Typography,Button } from "@material-tailwind/react";
+import {
+  Card,
+  CardBody,
+  CardFooter,
+  Dialog,
+  Input,
+  Typography,
+  Button,
+} from "@material-tailwind/react";
 import { t } from "i18next";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { updateProduct, uploadProductImage } from "../../services/api";
-import ButtonUI from "../../components/UI/Button"
+import ButtonUI from "../../components/UI/Button";
 
-const EditProduct = ({ productId  }) => {
+const EditProduct = ({ product }) => {
   const [open, setOpen] = useState(false);
   const [image, setImage] = useState(null);
-  const [name, setName] = useState("");
-
+  const [name, setName] = useState(product.name || "");
+  const [desc, setDesc] = useState(product.desc || "");
+  const [unitPrice, setPrice] = useState(product.unitPrice || 0);
   const handleOpen = () => setOpen((prevOpen) => !prevOpen);
+  const productId = product._id;
 
   const options = {
     position: "bottom-right",
@@ -22,41 +33,38 @@ const EditProduct = ({ productId  }) => {
     draggable: true,
     progress: undefined,
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try{
-      const updatedData = {name}
-     if (image) {
-       const uploadedImageUrl = await uploadProductImage(image);
-       updatedData.pic = uploadedImageUrl;
-     }
-     const response = await updateProduct(productId, updatedData);
+    try {
+      const updatedData = { name, desc, unitPrice };
+      if (image) {
+        const uploadedImageUrl = await uploadProductImage(image);
+        updatedData.pic = uploadedImageUrl;
+      }
+ await updateProduct(productId, updatedData);
       toast.success("Product updated successfully", options);
-      console.log("Product updated successfully", response);
       window.location.reload();
-
-    }catch(err){
-      toast.error("Error updating product!",options );
+    } catch (err) {
+      toast.error("Error updating product!", options);
       console.error("Error updating product!", err);
     }
-   
   };
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       setImage(file);
-      console.log("Selected file:", file);
     }
   };
 
   return (
     <>
-      <ButtonUI className="flex items-center text-center" onClick={handleOpen}>
+      <ButtonUI className="flex items-center text-center mx-0 my-4" onClick={handleOpen}>
         <span>
           <PencilIcon className="text-white" />
         </span>
-        Edit Product
+        {t("Update Product")}
       </ButtonUI>
       <Dialog
         size="xs"
@@ -68,7 +76,7 @@ const EditProduct = ({ productId  }) => {
           <form onSubmit={handleSubmit}>
             <CardBody className="flex flex-col gap-4">
               <Typography variant="h4" className="title_Update">
-                {t("UpdateProduct")}
+                {t("updateProduct")}
               </Typography>
               <div>
                 <label
@@ -103,9 +111,53 @@ const EditProduct = ({ productId  }) => {
                     type="text"
                     autoComplete="name"
                     autoFocus
-                    placeholder={name}
+                    placeholder={product.name}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
+                    className="Input w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+              <div>
+                <label
+                  htmlFor="disc"
+                  className="block text-sm font-medium leading-6"
+                >
+                  {t("disc")}
+                </label>
+                <div className="mt-2">
+                  <Input
+                    id="disc"
+                    name="disc"
+                    variant="static"
+                    type="text"
+                    autoComplete="disc"
+                    autoFocus
+                    placeholder={product.disc}
+                    value={desc}
+                    onChange={(e) => setDesc(e.target.value)}
+                    className="Input w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+              <div>
+                <label
+                  htmlFor="price"
+                  className="block text-sm font-medium leading-6"
+                >
+                  {t("price")}
+                </label>
+                <div className="mt-2">
+                  <Input
+                    id="price"
+                    name="price"
+                    variant="static"
+                    type="number"
+                    autoComplete="price"
+                    autoFocus
+                    placeholder={String(product.unitPrice)}
+                    value={unitPrice}
+                    onChange={(e) => setPrice(e.target.value)}
                     className="Input w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
                   />
                 </div>
@@ -117,7 +169,6 @@ const EditProduct = ({ productId  }) => {
                 variant="filled"
                 ripple={false}
                 className="btn_Update"
-                onClick={handleSubmit}
               >
                 {t("update")}
               </ButtonUI>

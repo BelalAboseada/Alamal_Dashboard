@@ -15,9 +15,10 @@ import "./style.scss";
 import { updateProfile, uploadAvatar } from "../../services/api";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export function UpdateProfile() {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = useSelector((state) => (state.user.user))
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(user.name);
   const [email, setEmail] = useState(user.email);
@@ -53,15 +54,18 @@ const handleSubmit = async (e) => {
 
     const response = await updateProfile(user._id, updatedData);
     toast.success("Profile updated successfully", options);
-    console.log("Profile updated successfully", response);
 
-    // Remove user data and token from local storage
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
 
+   
     // Navigate to the login page
     if (passwordUpdated) {
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
       navigate("/signIn");
+    }else{
+      const userUpdated = {...user,...updatedData};
+      localStorage.setItem("user", JSON.stringify(userUpdated));
+      window.location.reload();
     }
 
     // Optionally, reload the page
@@ -77,7 +81,6 @@ const handleSubmit = async (e) => {
     const file = event.target.files[0];
     if (file) {
       setImage(file);
-      console.log("Selected file:", file);
     }
   };
 

@@ -67,12 +67,10 @@ const MakePayment = () => {
         status,
       };
 
-      console.log("Payment Data :", paymentData);
 
       const response = await CreatePayment(paymentData);
 
       if (response) {
-        console.log("Payment Made Successfully!", response);
         toast.success(t("paymentAddSuccessfully"), options);
         clearFormFields();
       }

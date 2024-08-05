@@ -35,7 +35,6 @@ const AddProductLine = ({ invoiceId }) => {
         const data = await getAllProducts();
         setProducts(data.results);
         setProductLoading(false);
-        console.log("Fetched Products:", data.results);
       } catch (error) {
         console.error("Error fetching data:", error);
         setProductLoading(false);
@@ -64,9 +63,7 @@ const AddProductLine = ({ invoiceId }) => {
           },
         ],
       };
-
-      const response = await addProductLine(productLineData, invoiceId);
-      console.log("Product Line Created Successfully", response);
+ await addProductLine(productLineData, invoiceId);
       setLoading(true);
 
       const updatedInvoice = await getInvoice(invoiceId);

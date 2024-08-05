@@ -28,8 +28,12 @@ import Pagination from "../../components/Pagination/Pagination";
 import Loader from "../../components/Loader/Loader";
 import { CheckCircleIcon, CheckIcon } from "@heroicons/react/24/outline";
 import ContentLoader from "../../components/Loader/ContentLoader";
+import { useSelector } from "react-redux";
 
 const AllPayments = () => {
+  const user = useSelector((state) => state.user.user)
+  const userId = user._id;
+  const isAdmin = user.role === "admin" || user.role === "accountant";
   const [open, setOpen] = useState(false);
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -46,11 +50,9 @@ const AllPayments = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const data = await getAllPayments(page);
+        const data = await getAllPayments(page, userId,  isAdmin);
         setPayments(data.results);
         updateTotalPages(data.count);
-        console.log("Fetched Payments:", data.results);
-        console.log("Total Pages:", totalPages);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -75,8 +77,7 @@ const AllPayments = () => {
       const data = await getFilteredPayments(filterType, filterValue);
       setPayments(data.results);
       updateTotalPages(data.count);
-      console.log("Filtered Payments:", data.results);
-      console.log("Total Pages:", totalPages);
+  
     } catch (error) {
       console.error("Error fetching filtered data:", error);
     }
@@ -107,7 +108,6 @@ const handleConfirm = async (paymentId) => {
     const result = await updatePayment(paymentId, {
       status: true,
     });
-    console.log("Update result:", result);
 
     // Fetch updated payments
     const data = await getAllPayments(page);
@@ -128,7 +128,6 @@ const handleConfirm = async (paymentId) => {
 
         // Update the user profile in the database
         await updateProfile(user._id, { balance: user.balance });
-        console.log("Updated user profile:", user);
       }
     }
   } catch (error) {

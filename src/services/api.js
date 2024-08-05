@@ -49,13 +49,11 @@ export const uploadAvatar = async (profilePic) => {
       },
     });
 
-    console.log("Upload Response:", response);
 
     const image = response.data.profilePic;
     if (!image) {
       throw new Error("Image URL not found in response");
     }
-    console.log("image => ", image);
     return image;
   } catch (error) {
     console.log(" err uploading avatar =>  ", error.message);
@@ -68,7 +66,6 @@ export const updateProfile = async (userId, updatedData) => {
 
     if (updatedData.profilePic) {
       image = await uploadAvatar(updatedData.profilePic);
-      console.log("Image URL in updateProfile:", image);
     }
 
     // Add image URL to updatedData
@@ -88,7 +85,6 @@ export const updateProfile = async (userId, updatedData) => {
 };
 
 // Delete account
-
 export const deleteAccount = async (userId) => {
   try {
     const response = await axios.delete(`${ApiUrl}/users/${userId}`);
@@ -154,13 +150,11 @@ export const uploadInvoiceImage = async (invoiceImage) => {
       },
     });
 
-    console.log("Upload Response:", response);
 
     const image = response.data.image;
     if (!image) {
       throw new Error("Image URL not found in response");
     }
-    console.log("image => ", image);
     return image;
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };
@@ -172,14 +166,12 @@ export const makeInvoice = async (invoiceData, Image) => {
 
     if (Image) {
       image = await uploadInvoiceImage(Image);
-      console.log("Image URL in makeInvoice:", image);
     }
     // Add imageUrl to invoiceData
     const fullInvoiceData = {
       ...invoiceData,
       image,
     };
-    console.log(fullInvoiceData);
 
     const response = await axios.post(`${ApiUrl}/invoice`, fullInvoiceData);
     return response.data;
@@ -213,25 +205,20 @@ export const deleteProductLine = async (lineId, invoiceId) => {
 };
 
 // get All Invoices
-export const getAllInvoicesUsers = async (page, userId) => {
+export const getAllInvoices = async (page, userId ,isAdmin) => {
   try {
+    const url = isAdmin ? 
+    `${ApiUrl}/invoice/?page=${page}` :
+    `${ApiUrl}/invoice/user/${userId}/?page=${page}`;
     const response = await axios.get(
-      `${ApiUrl}/invoice/user/${userId}?page=${page}`
+      url
     );
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };
   }
 };
-// get All Invoices
-export const getAllInvoices = async (page) => {
-  try {
-    const response = await axios.get(`${ApiUrl}/invoice/?page=${page}`);
-    return response.data;
-  } catch (error) {
-    throw error.response ? error.response.data : { message: "Network error" };
-  }
-};
+
 // get invoice
 export const getInvoice = async (id) => {
   try {
@@ -247,7 +234,6 @@ export const getFilteredInvoices = async (filterType, filterValue) => {
     const response = await axios.get(
       `${ApiUrl}/invoice?filterType=${filterType}&filterValue=${filterValue}`
     );
-    console.log("Response:", response);
 
     return response.data;
   } catch (error) {
@@ -294,9 +280,12 @@ export const updatePayment = async (paymentId, updates) => {
 };
 
 // All Payments
-export const getAllPayments = async (page) => {
+export const getAllPayments = async (page, isAdmin, userId) => {
   try {
-    const response = await axios.get(`${ApiUrl}/payment?page=${page}`);
+    const url = isAdmin
+      ? `${ApiUrl}/payment/?page=${page}`
+      : `${ApiUrl}/payment/user/${userId}/?page=${page}`;
+    const response = await axios.get(url);
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };
@@ -308,7 +297,6 @@ export const getFilteredPayments = async (filterType, filterValue) => {
     const response = await axios.get(
       `${ApiUrl}/payment?filterType=${filterType}&filterValue=${filterValue}`
     );
-    console.log("Response:", response);
 
     return response.data;
   } catch (error) {
@@ -325,7 +313,6 @@ export const getFilteredPaymentsByInvoice = async (
     const response = await axios.get(
       `${ApiUrl}/payment/invoice/${id}?filterType=${filterType}&filterValue=${filterValue}`
     );
-    console.log("Response:", response);
 
     return response.data;
   } catch (error) {
@@ -338,7 +325,6 @@ export const getFilteredPaymentsByInvoice = async (
 export const getPaymentsByInvoice = async (id) => {
   try {
     const response = await axios.get(`${ApiUrl}/payment/invoice/${id}`);
-    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };
@@ -346,9 +332,9 @@ export const getPaymentsByInvoice = async (id) => {
 };
 
 // get ALl Products
-export const getAllProducts = async (page) => {
+export const getAllProducts = async (page, companyId) => {
   try {
-    const response = await axios.get(`${ApiUrl}/product?page=${page}`);
+    const response = await axios.get(`${ApiUrl}/product/user/${companyId}?page=${page}`);
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };
@@ -361,7 +347,6 @@ export const getFilteredProducts = async (filterType, filterValue) => {
     const response = await axios.get(
       `${ApiUrl}/product?filterType=${filterType}&filterValue=${filterValue}`
     );
-    console.log("Response:", response);
 
     return response.data;
   } catch (error) {
@@ -382,13 +367,11 @@ export const uploadProductImage = async (Image) => {
       },
     });
 
-    console.log("Upload Response:", response);
 
     const image = response.data.pic;
     if (!image) {
       throw new Error("Image URL not found in response");
     }
-    console.log("image => ", image);
     return image;
   } catch (error) {
     toast.error(error.message);
@@ -402,7 +385,6 @@ export const addProduct = async (productData) => {
 
     if (Image) {
       image = await uploadProductImage(Image);
-      console.log("Image URL in makeProduct:", image);
     }
     const fullInvoiceData = {
       ...productData,
@@ -427,7 +409,6 @@ export const updateProduct = async (productId, updatedData) => {
     let image = updatedData.image;
     if (image) {
       image = await uploadProductImage(image);
-      console.log("Image URL in updateProduct:", image);
     }
     const fullInvoiceData = {
       ...updatedData,
@@ -456,9 +437,12 @@ export const getProduct = async (id) => {
 
 //  get all visits
 
-export const getAllVisits = async (page) => {
+export const getAllVisits = async (page, isAdmin, userId) => {
   try {
-    const response = await axios.get(`${ApiUrl}/visit?page=${page}`);
+    const url = isAdmin
+      ? `${ApiUrl}/visit/?page=${page}`
+      : `${ApiUrl}/visit/user/${userId}/?page=${page}`;
+    const response = await axios.get(url);
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : { message: "Network error" };
@@ -471,7 +455,6 @@ export const getFilteredVisits = async (filterType, filterValue) => {
     const response = await axios.get(
       `${ApiUrl}/visit?filterType=${filterType}&filterValue=${filterValue}`
     );
-    console.log("Response:", response);
     return response.data;
   } catch (error) {
     console.error("Error:", error);
@@ -515,7 +498,6 @@ export const getFilteredTransactions = async (filterType, filterValue) => {
     const response = await axios.get(
       `${ApiUrl}/trans?filterType=${filterType}&filterValue=${filterValue}`
     );
-    console.log("Response:", response);
     return response.data;
   } catch (error) {
     console.error("Error:", error);

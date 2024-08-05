@@ -13,12 +13,14 @@ const Product = () => {
   let { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState([]);
+    const [enlargedImage, setEnlargedImage] = useState(null);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await getProduct(id);
         setProduct(data.results);
-        console.log("Fetched product:", data);
+
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -29,6 +31,13 @@ const Product = () => {
     fetchData();
   }, [id]);
 
+  const openImageModal = (imageUrl) => {
+    setEnlargedImage(imageUrl);
+  };
+
+  const closeImageModal = () => {
+    setEnlargedImage(null);
+  };
   return (
     <div className="Product" key={id}>
       <ContentWrapper>
@@ -80,35 +89,39 @@ const Product = () => {
                     src={product.pic}
                     width={280}
                     height={280}
+                    onClick={() => openImageModal(product.pic)}
                   />
                 </div>
               </div>
               <div className="col-span-12 md:col-span-6 lg:col-span-8 flex   flex-col items-center text-right  md:items-start  mt-6">
-                <div className="name mb-6 w-96">
-                  <h5 className="font-bold  text-base flex">{product.name}</h5>
+                <div className="name flex mb-6 w-96">
+                  <h5 className="font-bold  text-2xl flex">{product.name}</h5>
                 </div>
-                <div className="description mb-6">
-                  <p className="font-normal  text-base text-gray-700">
+                <div className="description flex gap-1  mb-6">
+                  <p className="font-bold text-base mx-1">
+                    {t("description")} 
+                  </p>
+                  <p className="font-normal text-base text-black">
                     {product.desc}
                   </p>
                 </div>
                 <div className="date flex gap-1  py-1  ">
                   <p className="font-bold text-base mx-1">
-                    <strong>{t("date")}:</strong>
+                    <strong>{t("createdAt")}:</strong>
                   </p>
-                  <p className="font-normal  text-base text-gray-700">
+                  <p className="font-normal text-base text-black">
                     {new Date(product.createdAt).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="description mb-6"></div>
 
                 <div className="unitPrice">
-                  <p className="font-medium  text-2xl text-black  ">
+                  <p className="font-medium  text-2xl   ">
                     {product.unitPrice}$
                   </p>
                 </div>
                 <div className="Button_Wrapper">
-                  <EditProduct productId={product._id} />
+                  <EditProduct product={product} />
                 </div>
               </div>
             </div>
@@ -116,6 +129,22 @@ const Product = () => {
         ) : (
           <div className="flex items-center justify-center">
             <p>{t("productNotFound")}</p>
+          </div>
+        )}
+
+        {enlargedImage && (
+          <div className="modal-overlay" onClick={closeImageModal}>
+            <div className="modal" onClick={(e) => e.stopPropagation()}>
+              <span className="close  text-Black " onClick={closeImageModal}>
+                &times;
+              </span>
+              <img
+                className="enlarged-image"
+                src={enlargedImage}
+                alt="enlarged-invoice"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
           </div>
         )}
       </ContentWrapper>

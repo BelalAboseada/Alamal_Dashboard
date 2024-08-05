@@ -34,7 +34,7 @@ const CreateProduct = () => {
     const companyId = JSON.parse(user).company;
     try {
       const imageUrl = await uploadProductImage(image);
-      console.log(imageUrl);
+    
 
       const productData = {
         name,
@@ -44,10 +44,9 @@ const CreateProduct = () => {
         company: companyId,
       };
       const response = await addProduct(productData, image);
-      console.log("res => ", response);
+     
       if (response) {
         toast.success("Product created successfully", options);
-        console.log("Product created successfully", response);
         clearFormFields();
       }
     } catch (error) {
@@ -67,7 +66,6 @@ const CreateProduct = () => {
     const file = event.target.files[0];
     if (file) {
       setImage(file);
-      console.log("Selected file:", file);
     }
   };
 

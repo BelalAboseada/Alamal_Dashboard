@@ -20,8 +20,11 @@ import usePagination from "../../hooks/UsePagination";
 import Loader from "../../components/Loader/Loader";
 import Pagination from "../../components/Pagination/Pagination";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/solid";
+import { useSelector } from "react-redux";
 
 const AllProducts = () => {
+  const user =  useSelector((state) =>  state.user.user)
+const companyId =  user.company
   const [open, setOpen] = useState(false);
   const [Product, setProduct] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -35,11 +38,10 @@ const AllProducts = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const data = await getAllProducts(page);
+        const data = await getAllProducts(page, companyId);
         setProduct(data.results);
         updateTotalPages(data.count);
-        console.log("Fetched Products:", data.results);
-        console.log("Total Pages:", totalPages);
+     
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -64,8 +66,7 @@ const AllProducts = () => {
       const data = await getFilteredProducts(filterType, filterValue);
       setProduct(data.results);
       updateTotalPages(data.count, data.results.length);
-      console.log("Filtered Products :", data.results);
-      console.log("Total Pages:", totalPages);
+
     } catch (error) {
       console.error("Error fetching filtered data:", error);
     }

@@ -38,7 +38,6 @@ const PaymentsByInvoice = () => {
       try {
         const data = await getPaymentsByInvoice(id);
         setPayments(data.results);
-        console.log("Fetched payments:", data.results);
       } catch (error) {
         console.error("Error fetching payments:", error);
       } finally {
@@ -62,8 +61,7 @@ const PaymentsByInvoice = () => {
       const data = await getFilteredPaymentsByInvoice(filterType, filterValue,id );
       setPayments(data.results);
       updateTotalPages(data.count, data.results.length);
-      console.log("Filtered payments:", data.results);
-      console.log("Total Pages:", totalPages);
+  
     } catch (error) {
       console.error("Error fetching filtered data:", error);
     }

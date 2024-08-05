@@ -14,8 +14,6 @@ const Home = () => {
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
 
-    console.log("User Data:", storedUser);
-
     if ( storedUser) {
       setUser(storedUser);
 

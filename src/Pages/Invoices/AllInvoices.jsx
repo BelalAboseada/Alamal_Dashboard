@@ -1,7 +1,7 @@
 import { t } from "i18next";
 import ContentWrapper from "../../components/ContentWrapper/contentWrapper";
 import { useEffect, useState } from "react";
-import { getAllInvoicesUsers, getFilteredInvoices } from "../../services/api";
+import { getAllInvoices, getFilteredInvoices } from "../../services/api";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/solid";
 import {
   Dialog,
@@ -21,10 +21,11 @@ import Loader from "../../components/Loader/Loader";
 import { Link } from "react-router-dom";
 import usePagination from "../../hooks/UsePagination";
 import Pagination from "../../components/Pagination/Pagination";
+import { useSelector } from "react-redux";
 
 const AllInvoices = () => {
-  const User = JSON.parse(localStorage.getItem("user"));
-  const userId = User._id;
+  const user = useSelector((state) => state.user.user);
+  const userId = user._id;
   const [invoices, setInvoices] = useState([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -32,6 +33,7 @@ const AllInvoices = () => {
   const [filterValue, setFilterValue] = useState("");
   const { page, nextPage, prevPage, goToPage, totalPages, updateTotalPages } =
     usePagination(1);
+    const isAdmin = user?.role === "admin" || user?.role === "accountant";
 
   const handleOpen = () => setOpen(!open);
 
@@ -39,11 +41,9 @@ const AllInvoices = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const data = await getAllInvoicesUsers(page, userId);
+        const data = await getAllInvoices(page, userId ,isAdmin);
         setInvoices(data.results);
         updateTotalPages(data.count);
-        console.log("Fetched invoices:", data.results);
-        console.log("Total Pages:", totalPages);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -68,8 +68,6 @@ const AllInvoices = () => {
       const data = await getFilteredInvoices(filterType, filterValue);
       setInvoices(data.results);
       updateTotalPages(data.count, data.results.length);
-      console.log("Filtered invoices:", data.results);
-      console.log("Total Pages:", totalPages);
     } catch (error) {
       console.error("Error fetching filtered data:", error);
     }

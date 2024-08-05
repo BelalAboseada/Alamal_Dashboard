@@ -65,7 +65,6 @@ const MakeTransaction = () => {
       };
       const response = await makeTrans(transactionData);
       if (response) {
-        console.log("Transaction created Successfully!", response);
         toast.success("Transaction created Successfully!", options);
         clearFormFields();
       }

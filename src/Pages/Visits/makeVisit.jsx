@@ -87,7 +87,7 @@ const MakeVisit = () => {
       const response = await makeVisit(visitData);
 
       if (response) {
-        console.log("Visit created successfully", response);
+     
         toast.success("Visit created successfully", options);
         clearFormFields();
       }

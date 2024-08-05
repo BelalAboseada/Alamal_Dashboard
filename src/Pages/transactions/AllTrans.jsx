@@ -59,8 +59,7 @@ const AllTrans = () => {
         const data = await getAllTransactions(page, userId, isAdmin);
         setTrans(data.results);
         updateTotalPages(data.count);
-        console.log("Fetched trans:", data.results);
-        console.log("Total Pages:", totalPages);
+    
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -86,8 +85,7 @@ const AllTrans = () => {
       const data = await getFilteredTransactions(filterType, filterValue);
       setTrans(data.results);
       updateTotalPages(data.count, data.results.length);
-      console.log("Filtered trans :", data.results);
-      console.log("Total Pages:", totalPages);
+
     } catch (error) {
       console.error("Error fetching filtered data:", error);
     }
@@ -129,32 +127,25 @@ const AllTrans = () => {
         if (confirmedTransaction) {
           const senderId = confirmedTransaction.sender._id;
           const receiverId = confirmedTransaction.receiver._id;
-          console.log("senderId => ", senderId);
-          console.log("receiverId => ", receiverId);
+       
 
           // Fetch sender and receiver profiles
           const [senderProfile, receiverProfile] = await Promise.all([
             getUserById(senderId),
             getUserById(receiverId),
           ]);
-          console.log("Sender profile:", senderProfile);
-          console.log("Receiver profile:", receiverProfile);
+       
 
           if (senderProfile && receiverProfile) {
             // Safely access balance
             const senderBalance = senderProfile.results?.balance ?? 0;
             const receiverBalance = receiverProfile.results?.balance ?? 0;
-            console.log("senderBalance => ", senderBalance);
-            console.log("receiverBalance => ", receiverBalance);
-            console.log(
-              "confirmedTransaction.amount =>",
-              confirmedTransaction.amount
-            );
-
+           
+         
             // Check if the amount is more than the receiver's balance
             if (confirmedTransaction.amount > receiverBalance) {
               toast.error("Transaction amount exceeds receiver's balance");
-              console.log("Transaction amount exceeds receiver's balance");
+            
               // Revert the transaction confirmation
               await updateTransaction(transactionId, { confirmed: "no" });
               window.location.reload();
@@ -185,11 +176,7 @@ const AllTrans = () => {
               localStorage.setItem("user", JSON.stringify(user));
             }
 
-            console.log(
-              "Updated user profiles:",
-              senderProfile.results,
-              receiverProfile.results
-            );
+         
           }
         }
       }

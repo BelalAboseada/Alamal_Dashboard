@@ -21,8 +21,12 @@ import usePagination from "../../hooks/UsePagination";
 import { getAllVisits, getFilteredVisits } from "../../services/api";
 import Pagination from "../../components/Pagination/Pagination";
 import Loader from "../../components/Loader/Loader";
+import { useSelector } from "react-redux";
 
 const AllVisits = () => {
+  const user =  useSelector((state) =>  state.user.user)
+  const isAdmin = user?.role === "admin";
+  const userId = user._id;
   const [Visits, setVisits] = useState([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -35,11 +39,10 @@ const AllVisits = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const data = await getAllVisits(page);
+        const data = await getAllVisits(page, isAdmin, userId);
         setVisits(data.results);
         updateTotalPages(data.count);
-        console.log("Fetched invoices:", data.results);
-        console.log("Total Pages:", totalPages);
+
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -64,8 +67,7 @@ const AllVisits = () => {
       const data = await getFilteredVisits(filterType, filterValue);
       setVisits(data.results);
       updateTotalPages(data.count, data.results.length);
-      console.log("Filtered Visits:", data.results);
-      console.log("Total Pages:", totalPages);
+
     } catch (error) {
       console.error("Error fetching filtered data:", error);
     }
