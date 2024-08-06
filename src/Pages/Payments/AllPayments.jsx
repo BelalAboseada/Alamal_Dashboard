@@ -1,4 +1,5 @@
 import { t } from "i18next";
+import { format } from "date-fns";
 import ContentWrapper from "../../components/ContentWrapper/contentWrapper";
 import {
   Breadcrumbs,
@@ -13,8 +14,15 @@ import {
   Button,
   Tooltip,
   Chip,
+  Popover,
+  PopoverHandler,
+  PopoverContent,
 } from "@material-tailwind/react";
-import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/solid";
+import {
+  AdjustmentsHorizontalIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import usePagination from "../../hooks/UsePagination";
@@ -29,9 +37,10 @@ import Loader from "../../components/Loader/Loader";
 import { CheckCircleIcon, CheckIcon } from "@heroicons/react/24/outline";
 import ContentLoader from "../../components/Loader/ContentLoader";
 import { useSelector } from "react-redux";
+import { DayPicker } from "react-day-picker";
 
 const AllPayments = () => {
-  const user = useSelector((state) => state.user.user)
+  const user = useSelector((state) => state.user.user);
   const userId = user._id;
   const isAdmin = user.role === "admin" || user.role === "accountant";
   const [open, setOpen] = useState(false);
@@ -39,6 +48,8 @@ const AllPayments = () => {
   const [loading, setLoading] = useState(false);
   const [filterType, setFilterType] = useState("");
   const [filterValue, setFilterValue] = useState("");
+  const [date, setDate] = useState(null);
+
   const [loadingId, setLoadingId] = useState(null);
 
   const { page, nextPage, prevPage, goToPage, totalPages, updateTotalPages } =
@@ -50,7 +61,7 @@ const AllPayments = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const data = await getAllPayments(page, userId,  isAdmin);
+        const data = await getAllPayments(page, userId, isAdmin);
         setPayments(data.results);
         updateTotalPages(data.count);
       } catch (error) {
@@ -77,7 +88,6 @@ const AllPayments = () => {
       const data = await getFilteredPayments(filterType, filterValue);
       setPayments(data.results);
       updateTotalPages(data.count);
-  
     } catch (error) {
       console.error("Error fetching filtered data:", error);
     }
@@ -102,40 +112,40 @@ const AllPayments = () => {
     };
   }, []);
 
-const handleConfirm = async (paymentId) => {
-  setLoadingId(paymentId);
-  try {
-    const result = await updatePayment(paymentId, {
-      status: true,
-    });
+  const handleConfirm = async (paymentId) => {
+    setLoadingId(paymentId);
+    try {
+      await updatePayment(paymentId, {
+        status: true,
+      });
 
-    // Fetch updated payments
-    const data = await getAllPayments(page);
-    setPayments(data.results);
-    updateTotalPages(data.count);
+      // Fetch updated payments
+      const data = await getAllPayments(page);
+      setPayments(data.results);
+      updateTotalPages(data.count);
 
-    // Retrieve user data from local storage
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user) {
-      // Find the confirmed payment and add its amount to the user's balance
-      const confirmedPayment = data.results.find(
-        (payment) => payment._id === paymentId
-      );
-      if (confirmedPayment) {
-        user.balance += confirmedPayment.amount;
-        // Update local storage with the new balance
-        localStorage.setItem("user", JSON.stringify(user));
+      // Retrieve user data from local storage
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user) {
+        // Find the confirmed payment and add its amount to the user's balance
+        const confirmedPayment = data.results.find(
+          (payment) => payment._id === paymentId
+        );
+        if (confirmedPayment) {
+          user.balance += confirmedPayment.amount;
+          // Update local storage with the new balance
+          localStorage.setItem("user", JSON.stringify(user));
 
-        // Update the user profile in the database
-        await updateProfile(user._id, { balance: user.balance });
+          // Update the user profile in the database
+          await updateProfile(user._id, { balance: user.balance });
+        }
       }
+    } catch (error) {
+      console.error("Error updating payment:", error);
+    } finally {
+      setLoadingId(null);
     }
-  } catch (error) {
-    console.error("Error updating payment:", error);
-  } finally {
-    setLoadingId(null);
-  }
-};
+  };
 
   const TABLE_HEAD = [
     { label: t("amount"), key: "amount" },
@@ -244,14 +254,75 @@ const handleConfirm = async (paymentId) => {
                   >
                     {t("search")}
                   </label>
-                  <Input
-                    id="search"
-                    variant="standard"
-                    className="Input w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
-                    placeholder={t("search")}
-                    onKeyUp={handleKeyUp}
-                    onChange={(e) => handleSearchChange(e)}
-                  />
+                  {filterType === "date" ? (
+                    <Popover placement="bottom">
+                      <PopoverHandler>
+                        <Input
+                          variant="standard"
+                          id="Date"
+                          onChange={() => null}
+                          className="Input w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
+                          value={date ? format(date, "dd-MM-yyyy") : ""}
+                        />
+                      </PopoverHandler>
+                      <PopoverContent>
+                        <DayPicker
+                          mode="single"
+                          selected={date}
+                          onSelect={setDate}
+                          showOutsideDays
+                          className="border-0 w-full"
+                          classNames={{
+                            caption:
+                              "flex justify-center py-2 mb-4 relative items-center",
+                            caption_label: "text-sm font-medium text-gray-900",
+                            nav: "flex items-center",
+                            nav_button:
+                              "h-6 w-6 bg-transparent hover:bg-blue-gray-50 p-1 rounded-md transition-colors duration-300",
+                            nav_button_previous: "absolute left-1.5",
+                            nav_button_next: "absolute right-1.5",
+                            table: "w-full border-collapse",
+                            head_row: "flex font-medium text-gray-900",
+                            head_cell: "m-0.5 w-9 font-normal text-sm",
+                            row: "flex w-full mt-2",
+                            cell: "text-gray-600 rounded-md h-9 w-9 text-center text-sm p-0 m-0.5 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-gray-900/20 [&:has([aria-selected].day-outside)]:text-white [&:has([aria-selected])]:bg-gray-900/50 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+                            day: "h-9 w-9 p-0 font-normal",
+                            day_range_end: "day-range-end",
+                            day_selected:
+                              "rounded-md bg-gray-900 text-white hover:bg-gray-900 hover:text-white focus:bg-gray-900 focus:text-white",
+                            day_today: "rounded-md bg-gray-200 text-gray-900",
+                            day_outside:
+                              "day-outside text-gray-500 opacity-50 aria-selected:bg-gray-500 aria-selected:text-gray-900 aria-selected:bg-opacity-10",
+                            day_disabled: "text-gray-500 opacity-50",
+                            day_hidden: "invisible",
+                          }}
+                          components={{
+                            IconLeft: ({ ...props }) => (
+                              <ChevronLeftIcon
+                                {...props}
+                                className="h-4 w-4 stroke-2"
+                              />
+                            ),
+                            IconRight: ({ ...props }) => (
+                              <ChevronRightIcon
+                                {...props}
+                                className="h-4 w-4 stroke-2"
+                              />
+                            ),
+                          }}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  ) : (
+                    <Input
+                      id="search"
+                      variant="standard"
+                      className="Input w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
+                      placeholder={t("search")}
+                      onKeyUp={handleKeyUp}
+                      onChange={(e) => handleSearchChange(e)}
+                    />
+                  )}
                 </div>
               </DialogBody>
               <DialogFooter className="space-x-2">

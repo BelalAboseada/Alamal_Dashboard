@@ -96,7 +96,6 @@ const MakePayment = () => {
           onSubmit={handleSubmit}
           className="bg-gray-100 p-5 rounded-md shadow-sm mb-5"
         >
-
           <div className="mt-5 space-y-5 md:space-y-0 md:space-x-5 md:flex md:items-center md:justify-between">
             <div className="my-2 mx-3 flex flex-col w-full ">
               <label
@@ -128,7 +127,7 @@ const MakePayment = () => {
                     id="Date"
                     onChange={() => null}
                     className="Input w-full rounded-md border-0 p-2   shadow-md sm:text-sm sm:leading-6"
-                    value={date ? format(date, "PPP") : ""}
+                    value={date ? format(date, "dd-MM-yyyy") : ""}
                   />
                 </PopoverHandler>
                 <PopoverContent>

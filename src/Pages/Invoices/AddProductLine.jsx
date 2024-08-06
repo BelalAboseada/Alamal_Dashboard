@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import {
   Card,
   CardBody,
@@ -12,37 +14,53 @@ import {
 import ButtonUI from "../../components/UI/Button";
 import { t } from "i18next";
 import { useEffect, useState } from "react";
-import ButtonUi from "../../components/UI/Button"
 import ContentLoader from "../../components/Loader/ContentLoader";
 import { addProductLine, getAllProducts, getInvoice } from "../../services/api";
 import Loader from "../../components/Loader/Loader";
+import { useSelector } from "react-redux";
 
 const AddProductLine = ({ invoiceId }) => {
+  const user = useSelector((state) => state.user.user);
+  const companyId = user.company;
   const [open, setOpen] = useState(false);
   const [products, setProducts] = useState([]);
   const [productLines, setProductLine] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState("");
   const [quantity, setQuantity] = useState(0);
-  const [ProductLoading, setProductLoading] = useState(false);
+  const [productLoading, setProductLoading] = useState(false);
 
   const handleOpen = () => setOpen((prevOpen) => !prevOpen);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchAllProducts = async () => {
       setProductLoading(true);
+      let allProducts = [];
+      let page = 1;
+      let hasMore = true;
+
       try {
-        const data = await getAllProducts();
-        setProducts(data.results);
-        setProductLoading(false);
+        while (hasMore) {
+          const data = await getAllProducts(page, companyId);
+
+          if (data && data.results) {
+            allProducts = [...allProducts, ...data.results];
+            hasMore = data.results.length > 0;
+            page += 1;
+          } else {
+            hasMore = false;
+          }
+        }
+        setProducts(allProducts);
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
         setProductLoading(false);
       }
     };
 
-    fetchData();
-  }, []);
+    fetchAllProducts();
+  }, [companyId]);
 
   const handleQuantityChange = (e) => {
     const value = e.target.value;
@@ -63,7 +81,7 @@ const AddProductLine = ({ invoiceId }) => {
           },
         ],
       };
- await addProductLine(productLineData, invoiceId);
+      await addProductLine(productLineData, invoiceId);
       setLoading(true);
 
       const updatedInvoice = await getInvoice(invoiceId);
@@ -81,8 +99,10 @@ const AddProductLine = ({ invoiceId }) => {
 
   return (
     <>
-      <ButtonUi onClick={handleOpen} className={`w-full`}>{t("AddPL")}</ButtonUi>
-      {loading ? ( 
+      <ButtonUI onClick={handleOpen} className={`w-full`}>
+        {t("AddPL")}
+      </ButtonUI>
+      {loading ? (
         <Loader />
       ) : (
         <Dialog size="xs" open={open} className="bg-transparent shadow-none">
@@ -97,27 +117,29 @@ const AddProductLine = ({ invoiceId }) => {
                     htmlFor="Product"
                     className="block text-sm font-medium leading-6 mb-2"
                   >
-                    {t("selactProd")}
+                    {t("selectProd")}
                   </label>
                   <Select
                     variant="standard"
-                    placeholder={t("selactProd")}
+                    placeholder={t("selectProd")}
                     id="Product"
                     className="select w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
                     value={selectedProductId}
                     onChange={(e) => setSelectedProductId(e)}
                     required
                   >
-                    {ProductLoading ? (
+                    {productLoading ? (
                       <div className="flex justify-center items-center">
                         <ContentLoader />
                       </div>
-                    ) : (
+                    ) : products.length > 0 ? (
                       products.map((prod) => (
                         <Option key={prod._id} value={prod._id}>
                           {prod.name}
                         </Option>
                       ))
+                    ) : (
+                      <Typography>{t("noProducts")}</Typography>
                     )}
                   </Select>
                 </div>

@@ -1,8 +1,10 @@
 import { t } from "i18next";
+import { format } from "date-fns";
+
 import ContentWrapper from "../../components/ContentWrapper/contentWrapper";
 import { useEffect, useState } from "react";
 import { getAllInvoices, getFilteredInvoices } from "../../services/api";
-import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/solid";
+import { AdjustmentsHorizontalIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 import {
   Dialog,
   DialogBody,
@@ -16,12 +18,16 @@ import {
   Breadcrumbs,
   Tooltip,
   Chip,
+  Popover,
+  PopoverHandler,
+  PopoverContent,
 } from "@material-tailwind/react";
 import Loader from "../../components/Loader/Loader";
 import { Link } from "react-router-dom";
 import usePagination from "../../hooks/UsePagination";
 import Pagination from "../../components/Pagination/Pagination";
 import { useSelector } from "react-redux";
+import { DayPicker } from "react-day-picker";
 
 const AllInvoices = () => {
   const user = useSelector((state) => state.user.user);
@@ -31,6 +37,8 @@ const AllInvoices = () => {
   const [loading, setLoading] = useState(false);
   const [filterType, setFilterType] = useState("");
   const [filterValue, setFilterValue] = useState("");
+    const [date, setDate] = useState(null);
+
   const { page, nextPage, prevPage, goToPage, totalPages, updateTotalPages } =
     usePagination(1);
     const isAdmin = user?.role === "admin" || user?.role === "accountant";
@@ -65,6 +73,7 @@ const AllInvoices = () => {
   const handleFilterSubmit = async () => {
     setOpen(false);
     try {
+
       const data = await getFilteredInvoices(filterType, filterValue);
       setInvoices(data.results);
       updateTotalPages(data.count, data.results.length);
@@ -108,7 +117,7 @@ const AllInvoices = () => {
             <Breadcrumbs>
               <Link
                 to={"/"}
-                className="opacity-60 text-black  text-sm font-medium  lg:text-base lg:font-extrabold "
+                className="opacity-60 text-black text-sm font-medium lg:text-base lg:font-extrabold"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -121,15 +130,15 @@ const AllInvoices = () => {
               </Link>
               <Link
                 to={"/AllInvoices"}
-                className="  text-sm font-medium  lg:text-base lg:font-extrabold "
+                className="text-sm font-medium lg:text-base lg:font-extrabold"
               >
                 <span>{t("invoices")}</span>
               </Link>
             </Breadcrumbs>
           </div>
-          <div className="Filter">
+          <div className="Filter relative">
             <Tooltip
-              className="bg-gray-100 text-blue-400 "
+              className="bg-gray-100 text-blue-400"
               content="ctrl + Q for Quick open"
               placement="top"
               animate={{
@@ -149,7 +158,7 @@ const AllInvoices = () => {
                 </button>
               </h6>
             </Tooltip>
-            <Dialog open={open} size="xs" handler={handleOpen}>
+            <Dialog open={open} size="xs" handler={handleOpen} className="z-20">
               <div className="flex items-center justify-between">
                 <DialogHeader className="flex flex-col items-start">
                   <Typography className="mb-1" variant="h4">
@@ -198,14 +207,75 @@ const AllInvoices = () => {
                   >
                     {t("search")}
                   </label>
-                  <Input
-                    id="search"
-                    variant="standard"
-                    className="Input w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
-                    placeholder={t("search")}
-                    onKeyUp={handleKeyUp}
-                    onChange={(e) => handleSearchChange(e)}
-                  />
+                  {filterType === "date" ? (
+                    <Popover placement="bottom">
+                      <PopoverHandler>
+                        <Input
+                          variant="standard"
+                          id="Date"
+                          onChange={() => null}
+                          className="Input w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
+                          value={date ? format(date, "dd-MM-yyyy") : ""}
+                        />
+                      </PopoverHandler>
+                      <PopoverContent className="PopoverContent">
+                        <DayPicker
+                          mode="single"
+                          selected={date}
+                          onSelect={setDate}
+                          showOutsideDays
+                          className="border-0 w-full"
+                          classNames={{
+                            caption:
+                              "flex justify-center py-2 mb-4 relative items-center",
+                            caption_label: "text-sm font-medium text-gray-900",
+                            nav: "flex items-center",
+                            nav_button:
+                              "h-6 w-6 bg-transparent hover:bg-blue-gray-50 p-1 rounded-md transition-colors duration-300",
+                            nav_button_previous: "absolute left-1.5",
+                            nav_button_next: "absolute right-1.5",
+                            table: "w-full border-collapse",
+                            head_row: "flex font-medium text-gray-900",
+                            head_cell: "m-0.5 w-9 font-normal text-sm",
+                            row: "flex w-full mt-2",
+                            cell: "text-gray-600 rounded-md h-9 w-9 text-center text-sm p-0 m-0.5 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-gray-900/20 [&:has([aria-selected].day-outside)]:text-white [&:has([aria-selected])]:bg-gray-900/50 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+                            day: "h-9 w-9 p-0 font-normal",
+                            day_range_end: "day-range-end",
+                            day_selected:
+                              "rounded-md bg-gray-900 text-white hover:bg-gray-900 hover:text-white focus:bg-gray-900 focus:text-white",
+                            day_today: "rounded-md bg-gray-200 text-gray-900",
+                            day_outside:
+                              "day-outside text-gray-500 opacity-50 aria-selected:bg-gray-500 aria-selected:text-gray-900 aria-selected:bg-opacity-10",
+                            day_disabled: "text-gray-500 opacity-50",
+                            day_hidden: "invisible",
+                          }}
+                          components={{
+                            IconLeft: ({ ...props }) => (
+                              <ChevronLeftIcon
+                                {...props}
+                                className="h-4 w-4 stroke-2"
+                              />
+                            ),
+                            IconRight: ({ ...props }) => (
+                              <ChevronRightIcon
+                                {...props}
+                                className="h-4 w-4 stroke-2"
+                              />
+                            ),
+                          }}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  ) : (
+                    <Input
+                      id="search"
+                      variant="standard"
+                      className="Input w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
+                      placeholder={t("search")}
+                      onKeyUp={handleKeyUp}
+                      onChange={(e) => handleSearchChange(e)}
+                    />
+                  )}
                 </div>
               </DialogBody>
               <DialogFooter className="space-x-2">
@@ -233,6 +303,7 @@ const AllInvoices = () => {
             </Dialog>
           </div>
         </div>
+
         {loading ? (
           <div className="LoaderWrapper h-full w-full flex justify-center items-center">
             <Loader />

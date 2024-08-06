@@ -14,12 +14,18 @@ import {  Breadcrumbs,
   DialogHeader,
   Input,
   Option,
+  Popover,
+  PopoverContent,
+  PopoverHandler,
   Select,
+  Tooltip,
   Typography,
 } from "@material-tailwind/react";
-import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/solid";
+import { AdjustmentsHorizontalIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 import usePagination from "../../hooks/UsePagination";
 import Pagination from "../../components/Pagination/Pagination";
+import { format } from "date-fns";
+import { DayPicker } from "react-day-picker";
 
 const PaymentsByInvoice = () => {
   const { id } = useParams();
@@ -28,6 +34,8 @@ const PaymentsByInvoice = () => {
   const [open, setOpen] = useState(false);
   const [filterType, setFilterType] = useState("");
   const [filterValue, setFilterValue] = useState("");
+    const [date, setDate] = useState(null);
+
   const { page, nextPage, prevPage, goToPage, totalPages, updateTotalPages } =
     usePagination(1);
 
@@ -97,7 +105,7 @@ const PaymentsByInvoice = () => {
             <Breadcrumbs>
               <Link
                 to={"/"}
-                className="opacity-60 text-black text-xs font-bold"
+                className="opacity-60 text-black text-sm font-medium lg:text-base lg:font-extrabold"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -109,37 +117,35 @@ const PaymentsByInvoice = () => {
                 </svg>
               </Link>
               <Link
-                to="/AllInvoices"
-                className="text-xs font-normal lg:text-base lg:font-extrabold"
+                to={"/AllPayments"}
+                className="text-sm font-medium lg:text-base lg:font-extrabold"
               >
-                <span>{t("invoices")}</span>
-              </Link>
-              <Link
-                to={`/invoice/${id}`}
-                className="text-xs font-normal lg:text-base lg:font-extrabold"
-              >
-                <span>{t("invoice")}</span>
-              </Link>
-              <Link
-                to={`/payment/invoice/${id}`}
-                className="text-xs font-normal lg:text-base lg:font-extrabold"
-              >
-                <span>{t("paymentForInvoice")}</span>
+                <span>{t("payment")}</span>
               </Link>
             </Breadcrumbs>
           </div>
           <div className="Filter">
-            <h6>
-              <button
-                onClick={handleOpen}
-                className="right-0 font-medium text-sm flex  items-center cursor-pointer"
-              >
-                <span>
-                  <AdjustmentsHorizontalIcon />
-                </span>
-                {t("filter")}
-              </button>
-            </h6>
+            <Tooltip
+              className="bg-gray-100 text-blue-400"
+              content="ctrl + Q for Quick open"
+              placement="top"
+              animate={{
+                mount: { scale: 1, y: 0 },
+                unmount: { scale: 0, y: 25 },
+              }}
+            >
+              <h6>
+                <button
+                  onClick={handleOpen}
+                  className="right-0 font-medium text-base flex gap-1 items-center cursor-pointer"
+                >
+                  <span>
+                    <AdjustmentsHorizontalIcon />
+                  </span>
+                  {t("filter")}
+                </button>
+              </h6>
+            </Tooltip>
             <Dialog open={open} size="xs" handler={handleOpen}>
               <div className="flex items-center justify-between">
                 <DialogHeader className="flex flex-col items-start">
@@ -175,7 +181,7 @@ const PaymentsByInvoice = () => {
                     id="SelectFilter"
                     className="select w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
                     required
-                    onChange={(e) => handleFilterChange(e)}
+                    onChange={(e) => handleFilterChange(e.target.value)}
                   >
                     <Option value="pharmacy">{t("pharmacy")}</Option>
                     <Option value="company">{t("companyName")}</Option>
@@ -189,20 +195,82 @@ const PaymentsByInvoice = () => {
                   >
                     {t("search")}
                   </label>
-                  <Input
-                    id="search"
-                    variant="standard"
-                    className="Input w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
-                    placeholder={t("search")}
-                    onKeyUp={handleKeyUp}
-                    onChange={handleSearchChange}
-                  />
+                  {filterType === "date" ? (
+                    <Popover placement="bottom">
+                      <PopoverHandler>
+                        <Input
+                          variant="standard"
+                          id="Date"
+                          onChange={() => null}
+                          className="Input w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
+                          value={date ? format(date, "dd-MM-yyyy") : ""}
+                        />
+                      </PopoverHandler>
+                      <PopoverContent>
+                        <DayPicker
+                          mode="single"
+                          selected={date}
+                          onSelect={setDate}
+                          showOutsideDays
+                          className="border-0 w-full"
+                          classNames={{
+                            caption:
+                              "flex justify-center py-2 mb-4 relative items-center",
+                            caption_label: "text-sm font-medium text-gray-900",
+                            nav: "flex items-center",
+                            nav_button:
+                              "h-6 w-6 bg-transparent hover:bg-blue-gray-50 p-1 rounded-md transition-colors duration-300",
+                            nav_button_previous: "absolute left-1.5",
+                            nav_button_next: "absolute right-1.5",
+                            table: "w-full border-collapse",
+                            head_row: "flex font-medium text-gray-900",
+                            head_cell: "m-0.5 w-9 font-normal text-sm",
+                            row: "flex w-full mt-2",
+                            cell: "text-gray-600 rounded-md h-9 w-9 text-center text-sm p-0 m-0.5 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-gray-900/20 [&:has([aria-selected].day-outside)]:text-white [&:has([aria-selected])]:bg-gray-900/50 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+                            day: "h-9 w-9 p-0 font-normal",
+                            day_range_end: "day-range-end",
+                            day_selected:
+                              "rounded-md bg-gray-900 text-white hover:bg-gray-900 hover:text-white focus:bg-gray-900 focus:text-white",
+                            day_today: "rounded-md bg-gray-200 text-gray-900",
+                            day_outside:
+                              "day-outside text-gray-500 opacity-50 aria-selected:bg-gray-500 aria-selected:text-gray-900 aria-selected:bg-opacity-10",
+                            day_disabled: "text-gray-500 opacity-50",
+                            day_hidden: "invisible",
+                          }}
+                          components={{
+                            IconLeft: ({ ...props }) => (
+                              <ChevronLeftIcon
+                                {...props}
+                                className="h-4 w-4 stroke-2"
+                              />
+                            ),
+                            IconRight: ({ ...props }) => (
+                              <ChevronRightIcon
+                                {...props}
+                                className="h-4 w-4 stroke-2"
+                              />
+                            ),
+                          }}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  ) : (
+                    <Input
+                      id="search"
+                      variant="standard"
+                      className="Input w-full rounded-md border-0 p-2 shadow-md sm:text-sm sm:leading-6"
+                      placeholder={t("search")}
+                      onKeyUp={handleKeyUp}
+                      onChange={(e) => handleSearchChange(e)}
+                    />
+                  )}
                 </div>
               </DialogBody>
               <DialogFooter className="space-x-2">
                 <Button
                   variant="text"
                   color="gray"
+                  ripple={false}
                   onClick={() => {
                     setFilterType("");
                     setFilterValue("");
@@ -213,6 +281,7 @@ const PaymentsByInvoice = () => {
                 </Button>
                 <Button
                   variant="gradient"
+                  ripple={false}
                   color="blue"
                   onClick={handleFilterSubmit}
                 >
